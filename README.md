@@ -1,28 +1,53 @@
-# athlo
+# 🏋️‍♂️ Athlo — Your Personal Fitness Companion
 
-Ini merupakan Project Kelompok kami yang beranggotakan Raditya, Javier, Dodi, dan Fikri
-Masing-masing dari kami membuat fitur yang berisikan List atau Grid. 
-Fikri: Communityfeed
-Radit: Nutrition
-Dodi: Workout
-Javier: Progress Tracker
+**Athlo** adalah project kelompok kami yang terinspirasi dari aplikasi seperti *Strava* dan *3-Day Workout*.  
+Aplikasi ini dirancang untuk membantu pengguna menjaga kebugaran tubuh melalui fitur-fitur yang mendukung gaya hidup sehat dan aktif.
 
-Sebelumnya kami telah membuat Login, Register, serta Profile untuk project kami 
+---
 
+## 👥 Anggota Kelompok
 
+| Nama | Fitur yang Dikembangkan |
+|------|--------------------------|
+| **Fikri** | Community Feed |
+| **Raditya** | Nutrition |
+| **Dodi** | Workout |
+| **Javier** | Progress Tracker |
 
+Selain itu, kami juga telah mengembangkan fitur dasar seperti:
+- **Login**
+- **Register**
+- **Profile**
 
-A new Flutter project.
+---
 
-## Getting Started
+## 🧩 Fitur Utama
 
-This project is a starting point for a Flutter application.
+### 🏋️ Workout (by Dodi)
+Menampilkan daftar latihan (List/Grid) untuk membantu pengguna melakukan aktivitas olahraga dengan panduan yang terstruktur.
 
-A few resources to get you started if this is your first Flutter project:
+### 🥗 Nutrition (by Raditya)
+Fitur untuk mengatur dan menampilkan informasi nutrisi agar pengguna dapat menjaga pola makan sesuai target kebugaran.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 💬 Community Feed (by Fikri)
+Tempat bagi pengguna untuk berbagi pencapaian, tips, serta motivasi seputar dunia fitness.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 📈 Progress Tracker (by Javier)
+Membantu pengguna memantau perkembangan hasil latihan mereka dari waktu ke waktu.
+
+---
+
+## ⚙️ Teknologi yang Digunakan
+- **Frontend:** (tulis framework/library yang digunakan, misal *React*, *Vue*, *Laravel Blade*, atau *Flutter*)  
+- **Backend:** (jika ada, misal *Laravel*, *Node.js*, dsb)  
+- **Database:** (MySQL / Firebase / MongoDB, sesuai kebutuhan project)  
+
+---
+
+## 🚀 Cara Menjalankan Project
+
+1. Clone repository:
+   ```bash
+   git clone https://github.com/username/athlo.git
+2. Jalankan di Android Studio atau IDE favorit anda, Selamat Mencoba! 
+terimakasih atas perhatiannya
