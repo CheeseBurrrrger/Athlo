@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'register_page.dart';
-import 'profile_page.dart';
+import 'main_navigation.dart';  // ADD THIS
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
-        '/profile': (context) => const ProfilePage(),
+        '/home': (context) => const MainNavigation(),  // CHANGED from '/profile'
       },
     );
   }

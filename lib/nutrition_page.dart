@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NutritionGridApp extends StatelessWidget {
+  NutritionGridApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
