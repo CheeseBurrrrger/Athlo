@@ -45,3 +45,5 @@ Membantu pengguna memantau perkembangan hasil latihan mereka dari waktu ke waktu
    git clone https://github.com/CheeseBurrrrger/Athlo.git
 2. Jalankan di Android Studio atau IDE favorit anda, Selamat Mencoba! 
 terimakasih atas perhatiannya
+
+![teamwork](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXhuZ3ppZ2w5YjlydDB4aHJ1aGtrcTgzMzF4Z3Izanl5YWg0OGt4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4W1AX90UwFdzrjSoGv/giphy.gif)
