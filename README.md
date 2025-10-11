@@ -1,5 +1,19 @@
 # athlo
 
+// 
+Ini merupakan Project Kelompok kami yang beranggotakan Raditya, Javier, Dodi, dan Fikri
+Masing-masing dari kami membuat fitur yang berisikan List atau Grid. 
+Fikri: Communityfeed
+Radit: Nutrition
+Dodi: Workout
+Javier: Progress Tracker
+
+Sebelumnya kami telah membuat Login, Register, serta Profile untuk project kami 
+//
+
+
+
+
 A new Flutter project.
 
 ## Getting Started
