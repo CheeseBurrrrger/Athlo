@@ -42,6 +42,6 @@ Membantu pengguna memantau perkembangan hasil latihan mereka dari waktu ke waktu
 
 1. Clone repository:
    ```bash
-   git clone https://github.com/username/athlo.git
+   git clone https://github.com/CheeseBurrrrger/Athlo.git
 2. Jalankan di Android Studio atau IDE favorit anda, Selamat Mencoba! 
 terimakasih atas perhatiannya
