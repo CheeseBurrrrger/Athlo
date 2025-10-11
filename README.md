@@ -1,6 +1,6 @@
 # 🏋️‍♂️ Athlo — Your Personal Fitness Companion
 
-**Athlo** adalah project kelompok kami yang terinspirasi dari aplikasi seperti *Strava* dan *3-Day Workout*.  
+**Athlo** adalah project kelompok kami yang terinspirasi dari aplikasi seperti *Strava* dan *30-Day Workout*.  
 Aplikasi ini dirancang untuk membantu pengguna menjaga kebugaran tubuh melalui fitur-fitur yang mendukung gaya hidup sehat dan aktif.
 
 ---
@@ -11,7 +11,7 @@ Aplikasi ini dirancang untuk membantu pengguna menjaga kebugaran tubuh melalui f
 |------|--------------------------|
 | **Fikri** | Community Feed |
 | **Raditya** | Nutrition |
-| **Dodi** | Workout |
+| **Dody** | Workout |
 | **Javier** | Progress Tracker |
 
 Selain itu, kami juga telah mengembangkan fitur dasar seperti:
@@ -23,7 +23,7 @@ Selain itu, kami juga telah mengembangkan fitur dasar seperti:
 
 ## 🧩 Fitur Utama
 
-### 🏋️ Workout (by Dodi)
+### 🏋️ Workout (by Dody)
 Menampilkan daftar latihan (List/Grid) untuk membantu pengguna melakukan aktivitas olahraga dengan panduan yang terstruktur.
 
 ### 🥗 Nutrition (by Raditya)
@@ -35,12 +35,6 @@ Tempat bagi pengguna untuk berbagi pencapaian, tips, serta motivasi seputar duni
 ### 📈 Progress Tracker (by Javier)
 Membantu pengguna memantau perkembangan hasil latihan mereka dari waktu ke waktu.
 
----
-
-## ⚙️ Teknologi yang Digunakan
-- **Frontend:** (tulis framework/library yang digunakan, misal *React*, *Vue*, *Laravel Blade*, atau *Flutter*)  
-- **Backend:** (jika ada, misal *Laravel*, *Node.js*, dsb)  
-- **Database:** (MySQL / Firebase / MongoDB, sesuai kebutuhan project)  
 
 ---
 
