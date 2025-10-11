@@ -2,8 +2,7 @@ import 'package:athlo/workout_page.dart';
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 import 'nutrition_page.dart';
-// import 'workout_page.dart';
-// import 'community_page.dart';
+import 'community.dart';
 import 'progress_tracker.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -20,7 +19,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final List<Widget> _pages = [
     const ProfilePage(),
     WorkoutPage(),
-    const PlaceholderPage(title: 'Community Challenge', icon: Icons.people),
+    const FitnessApp(),
     const ProgressTrackerPage(),
     NutritionGridApp(),
   ];
