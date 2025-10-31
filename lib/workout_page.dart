@@ -6,18 +6,16 @@ class WorkoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Workout Plans', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF3C467B),
+        title: const Text('Workout Plans', style: TextStyle(fontWeight: FontWeight.bold,color: Color(0xFF3C467B))),
+        backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Search coming soon!')),
-              );
+              _showAddWorkoutBottomSheet(context);
             },
           ),
         ],
@@ -26,7 +24,6 @@ class WorkoutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -57,7 +54,6 @@ class WorkoutPage extends StatelessWidget {
               ),
             ),
 
-            // Quick Stats
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -85,38 +81,51 @@ class WorkoutPage extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-
-            // Workout Plans Grid
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.75,
-              ),
-              itemCount: workoutPrograms.length,
-              itemBuilder: (context, index) {
-                final program = workoutPrograms[index];
-                return _buildWorkoutCard(
-                  context,
-                  program['title']!,
-                  program['duration']!,
-                  program['level']!,
-                  program['target']!,
-                  program['exercises']!,
-                  program['icon'] as IconData,
-                  program['color'] as Color,
-                  program['badge']!,
-                );
-              },
-            ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              int crossAxisCount;
+              double childAspectRatio;
+              if (constraints.maxWidth > 1200) {
+                crossAxisCount = 6;
+                childAspectRatio = 0.9;
+              } else if (constraints.maxWidth >= 800) {
+                crossAxisCount = 3;
+                childAspectRatio = 0.8;
+              } else {
+                crossAxisCount = 2;
+                childAspectRatio = 0.65;
+              }
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: childAspectRatio,
+                ),
+                itemCount: workoutPrograms.length,
+                itemBuilder: (context, index) {
+                  final program = workoutPrograms[index];
+                  return _buildWorkoutCard(
+                    context,
+                    program['title']!,
+                    program['duration']!,
+                    program['level']!,
+                    program['target']!,
+                    program['exercises']!,
+                    program['icon'] as IconData,
+                    program['color'] as Color,
+                    program['badge']!,
+                  );
+                },
+              );
+            },
+          ),
 
             const SizedBox(height: 24),
 
-            // Popular Workouts Section
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
               child: Text(
@@ -125,7 +134,6 @@ class WorkoutPage extends StatelessWidget {
               ),
             ),
 
-            // List view for popular workouts
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -217,11 +225,15 @@ class WorkoutPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color,
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+              color: color.withValues(alpha: 0.5),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -336,6 +348,10 @@ class WorkoutPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color,
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -713,4 +729,135 @@ class WorkoutDetailPage extends StatelessWidget {
       );
     }).toList();
   }
+}
+void _showAddWorkoutBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => Container(
+      height: MediaQuery.of(context).size.height * 0.75,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Add Custom Workout',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Workout Name',
+                      prefixIcon: const Icon(Icons.fitness_center),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Target Muscles',
+                      prefixIcon: const Icon(Icons.track_changes),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Number of Exercises',
+                      prefixIcon: const Icon(Icons.format_list_numbered),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Custom workout created! 💪')),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3C467B),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Create Workout',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+Widget _buildLevelChip(String label, Color color) {
+  return FilterChip(
+    label: Text(label),
+    labelStyle: TextStyle(color: color, fontWeight: FontWeight.bold),
+    backgroundColor: color.withOpacity(0.1),
+    side: BorderSide(color: color),
+    onSelected: (selected) {},
+  );
 }

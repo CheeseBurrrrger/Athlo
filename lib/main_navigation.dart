@@ -1,10 +1,10 @@
-import 'package:athlo/workout_page.dart';
+// import 'package:athlo/workout_page.dart';
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 import 'nutrition_page.dart';
 import 'community.dart';
 import 'progress_tracker.dart';
-
+import 'pages/workout_page.dart';
 class MainNavigation extends StatefulWidget {
   const MainNavigation({Key? key}) : super(key: key);
 
@@ -15,7 +15,6 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
 
-  // List of pages - replace placeholders when you create the actual pages
   final List<Widget> _pages = [
     const ProfilePage(),
     WorkoutPage(),
