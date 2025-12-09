@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Material, Colors;
+
 class WorkoutDetailPage extends StatelessWidget {
   final String title;
   final String duration;
@@ -21,113 +23,169 @@ class WorkoutDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: CustomScrollView(
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
+      child: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
+          CupertinoSliverNavigationBar(
             backgroundColor: color,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [color.withOpacity(0.8), color],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(icon, size: 80, color: Colors.white.withOpacity(0.3)),
-                ),
+            largeTitle: Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.white,
               ),
             ),
+            leading: CupertinoNavigationBarBackButton(
+              color: CupertinoColors.white,
+              onPressed: () => Navigator.pop(context),
+            ),
+            stretch: true,
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Info Cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoCard(Icons.access_time, 'Duration', duration, color),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildInfoCard(Icons.bar_chart, 'Level', level, color),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoCard(Icons.track_changes, 'Target', target, color),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildInfoCard(Icons.fitness_center, 'Exercises', exercises, color),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Description
-                  const Text(
-                    'Workout Overview',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Program latihan ini dirancang untuk memaksimalkan hasil dengan fokus pada $target. '
-                        'Cocok untuk level $level yang ingin meningkatkan kekuatan dan massa otot.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700, height: 1.5),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Exercise List
-                  const Text(
-                    'Exercise List',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-
-                  ..._buildExerciseList(color),
-
-                  const SizedBox(height: 24),
-
-                  // Start Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Starting workout! 💪')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Start Workout',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
+            child: Column(
+              children: [
+                // Hero Image
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color.withOpacity(0.8), color],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                ],
-              ),
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      size: 80,
+                      color: CupertinoColors.white.withOpacity(0.3),
+                    ),
+                  ),
+                ),
+
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Info Cards
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.time,
+                              'Duration',
+                              duration,
+                              color,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.chart_bar,
+                              'Level',
+                              level,
+                              color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.scope,
+                              'Target',
+                              target,
+                              color,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.sportscourt,
+                              'Exercises',
+                              exercises,
+                              color,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Description
+                      const Text(
+                        'Workout Overview',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Program latihan ini dirancang untuk memaksimalkan hasil dengan fokus pada $target. '
+                            'Cocok untuk level $level yang ingin meningkatkan kekuatan dan massa otot.',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: CupertinoColors.systemGrey,
+                          height: 1.5,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Exercise List
+                      const Text(
+                        'Exercise List',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      ..._buildExerciseList(color),
+
+                      const SizedBox(height: 24),
+
+                      // Start Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: CupertinoButton.filled(
+                          onPressed: () {
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (context) => CupertinoAlertDialog(
+                                content: const Text('Starting workout! 💪'),
+                                actions: [
+                                  CupertinoDialogAction(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: const Text(
+                            'Start Workout',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -139,11 +197,11 @@ class WorkoutDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: CupertinoColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: CupertinoColors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -155,12 +213,18 @@ class WorkoutDetailPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            style: const TextStyle(
+              fontSize: 12,
+              color: CupertinoColors.systemGrey,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -183,7 +247,7 @@ class WorkoutDetailPage extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: CupertinoColors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withOpacity(0.2)),
         ),
@@ -196,7 +260,11 @@ class WorkoutDetailPage extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(Icons.fitness_center, color: color, size: 20),
+              child: Icon(
+                CupertinoIcons.sportscourt,
+                color: color,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -205,17 +273,27 @@ class WorkoutDetailPage extends StatelessWidget {
                 children: [
                   Text(
                     exercise['name']!,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     exercise['sets']!,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: CupertinoColors.systemGrey,
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.play_circle_outline, color: color, size: 28),
+            Icon(
+              CupertinoIcons.play_circle,
+              color: color,
+              size: 28,
+            ),
           ],
         ),
       );

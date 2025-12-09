@@ -1,3 +1,5 @@
+import 'package:athlo/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'main.dart'; // Import ResponsiveLayout
 
@@ -13,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  String errorMessage = '';
 
   @override
   void dispose() {
@@ -21,9 +24,16 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacementNamed(context, '/home');
+      try{
+        await authService.value.signIn(email: _emailController.text, password: _passwordController.text);
+        Navigator.pushReplacementNamed(context, '/home');
+      } on FirebaseAuthException catch (e){
+        setState(() {
+          errorMessage = e.message ?? 'this thing wont working';
+        });
+      }
     }
   }
 
@@ -186,6 +196,12 @@ class _LoginPageState extends State<LoginPage> {
             },
           ),
           const SizedBox(height: 24),
+          // const SizedBox(height: 16),
+          Text(
+            errorMessage,
+            style: TextStyle(color: Colors.redAccent),
+          ),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _login,
             style: ElevatedButton.styleFrom(
@@ -195,6 +211,32 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             child: const Text('Login', style: TextStyle(fontSize: 16)),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: ()async{
+              try {
+                await authService.value.googleSignIn();
+                if (mounted) {
+                  Navigator.pushReplacementNamed(context, '/home');
+                }
+              } on FirebaseAuthException catch (e) {
+                setState(() {
+                  errorMessage = e.message ?? 'Google Sign-In failed';
+                });
+              } catch (e) {
+                setState(() {
+                  errorMessage = 'An error occurred during Google Sign-In';
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('continue with Google', style: TextStyle(fontSize: 16)),
           ),
           const SizedBox(height: 16),
           Row(

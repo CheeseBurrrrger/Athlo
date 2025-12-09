@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Material, Colors;
 import '../models/custom_workout.dart';
 import '../models/exercise.dart';
 
@@ -22,179 +23,202 @@ class CustomWorkoutDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _getColorFromHex(workout.color);
 
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: CustomScrollView(
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
+      child: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
+          CupertinoSliverNavigationBar(
             backgroundColor: color,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                workout.title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [color.withOpacity(0.8), color],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.fitness_center,
-                    size: 80,
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                ),
+            largeTitle: Text(
+              workout.title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.white,
               ),
             ),
+            leading: CupertinoNavigationBarBackButton(
+              color: CupertinoColors.white,
+              onPressed: () => Navigator.pop(context),
+            ),
+            stretch: true,
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Info Cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoCard(
-                          Icons.access_time,
-                          'Duration',
-                          workout.duration,
-                          color,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildInfoCard(
-                          Icons.bar_chart,
-                          'Level',
-                          workout.level,
-                          color,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoCard(
-                          Icons.track_changes,
-                          'Target',
-                          workout.targetMuscle,
-                          color,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildInfoCard(
-                          Icons.fitness_center,
-                          'Exercises',
-                          '${workout.exercises.length}',
-                          color,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Description
-                  const Text(
-                    'Workout Overview',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Program latihan ini dirancang untuk memaksimalkan hasil dengan fokus pada ${workout.targetMuscle}. '
-                        'Cocok untuk level ${workout.level} yang ingin meningkatkan kekuatan dan massa otot.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                      height: 1.5,
+            child: Column(
+              children: [
+                // Hero Image
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color.withOpacity(0.8), color],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
+                  child: Center(
+                    child: Icon(
+                      CupertinoIcons.sportscourt,
+                      size: 80,
+                      color: CupertinoColors.white.withOpacity(0.3),
+                    ),
+                  ),
+                ),
 
-                  const SizedBox(height: 24),
-
-                  // Exercise List
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Info Cards
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.time,
+                              'Duration',
+                              workout.duration,
+                              color,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.chart_bar,
+                              'Level',
+                              workout.level,
+                              color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.scope,
+                              'Target',
+                              workout.targetMuscle,
+                              color,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildInfoCard(
+                              CupertinoIcons.sportscourt,
+                              'Exercises',
+                              '${workout.exercises.length}',
+                              color,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Description
                       const Text(
-                        'Exercise List',
+                        'Workout Overview',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
+                      const SizedBox(height: 12),
+                      Text(
+                        'Program latihan ini dirancang untuk memaksimalkan hasil dengan fokus pada ${workout.targetMuscle}. '
+                            'Cocok untuk level ${workout.level} yang ingin meningkatkan kekuatan dan massa otot.',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: CupertinoColors.systemGrey,
+                          height: 1.5,
                         ),
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${workout.exercises.length} exercises',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: color,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Exercise List Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Exercise List',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: color.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${workout.exercises.length} exercises',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Dynamic exercise list from workout data
+                      ...workout.exercises.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final exercise = entry.value;
+                        return _buildExerciseCard(
+                          exercise,
+                          index + 1,
+                          color,
+                          context,
+                        );
+                      }),
+
+                      const SizedBox(height: 24),
+
+                      // Start Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: CupertinoButton.filled(
+                          onPressed: () {
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (context) => CupertinoAlertDialog(
+                                content: const Text('Starting workout! 💪'),
+                                actions: [
+                                  CupertinoDialogAction(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: const Text(
+                            'Start Workout',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24),
                     ],
                   ),
-                  const SizedBox(height: 12),
-
-                  // Dynamic exercise list from workout data
-                  ...workout.exercises.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final exercise = entry.value;
-                    return _buildExerciseCard(exercise, index + 1, color, context);
-                  }),
-
-                  const SizedBox(height: 24),
-
-                  // Start Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Starting workout! 💪')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Start Workout',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -206,11 +230,11 @@ class CustomWorkoutDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: CupertinoColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: CupertinoColors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -222,12 +246,18 @@ class CustomWorkoutDetailPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            style: const TextStyle(
+              fontSize: 12,
+              color: CupertinoColors.systemGrey,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -244,7 +274,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: CupertinoColors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withOpacity(0.2)),
       ),
@@ -252,9 +282,8 @@ class CustomWorkoutDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Exercise header with number and name
-          InkWell(
+          GestureDetector(
             onTap: () => _showExerciseDetails(exercise, context, color),
-            borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -292,17 +321,17 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(
-                              Icons.settings,
+                            const Icon(
+                              CupertinoIcons.settings,
                               size: 12,
-                              color: Colors.grey.shade600,
+                              color: CupertinoColors.systemGrey,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               exercise.equipment,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
+                                color: CupertinoColors.systemGrey,
                               ),
                             ),
                           ],
@@ -311,7 +340,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    Icons.info_outline,
+                    CupertinoIcons.info_circle,
                     color: color,
                     size: 20,
                   ),
@@ -326,7 +355,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: CupertinoColors.systemGrey6,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ClipRRect(
@@ -337,11 +366,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
+                      child: CupertinoActivityIndicator(
                         color: color,
                       ),
                     );
@@ -352,16 +377,16 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.broken_image,
+                            CupertinoIcons.photo,
                             size: 40,
-                            color: Colors.grey.shade400,
+                            color: CupertinoColors.systemGrey3,
                           ),
                           const SizedBox(height: 8),
-                          Text(
+                          const Text(
                             'GIF not available',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: CupertinoColors.systemGrey,
                             ),
                           ),
                         ],
@@ -377,17 +402,14 @@ class CustomWorkoutDetailPage extends StatelessWidget {
   }
 
   void _showExerciseDetails(Exercise exercise, BuildContext context, Color color) {
-    showModalBottomSheet(
+    showCupertinoModalPopup(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        builder: (context, scrollController) => Container(
+      builder: (context) => Material(
+        color: CupertinoColors.systemBackground,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.85,
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: CupertinoColors.systemBackground,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
@@ -398,213 +420,233 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: CupertinoColors.systemGrey4,
                   borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Header
+              CupertinoNavigationBar(
+                backgroundColor: CupertinoColors.systemBackground,
+                border: null,
+                middle: Text(
+                  exercise.name,
+                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                ),
+                trailing: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: const Text('Close'),
+                  onPressed: () => Navigator.pop(context),
                 ),
               ),
 
               // Content
               Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Exercise name
-                      Text(
-                        exercise.name,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                child: CupertinoScrollbar(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Equipment
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(CupertinoIcons.settings, size: 14, color: color),
+                              const SizedBox(width: 4),
+                              Text(
+                                exercise.equipment,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: color,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
 
-                      // Equipment
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.settings, size: 14, color: color),
-                            const SizedBox(width: 4),
-                            Text(
-                              exercise.equipment,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: color,
+                        const SizedBox(height: 20),
+
+                        // GIF
+                        if (exercise.gifUrl.isNotEmpty)
+                          Container(
+                            height: 250,
+                            margin: const EdgeInsets.only(bottom: 20),
+                            decoration: BoxDecoration(
+                              color: CupertinoColors.systemGrey6,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                exercise.gifUrl,
+                                fit: BoxFit.contain,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CupertinoActivityIndicator(color: color),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.photo,
+                                          size: 50,
+                                          color: CupertinoColors.systemGrey3,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          'GIF not available',
+                                          style: TextStyle(
+                                            color: CupertinoColors.systemGrey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // GIF
-                      if (exercise.gifUrl.isNotEmpty)
-                        Container(
-                          height: 250,
-                          margin: const EdgeInsets.only(bottom: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              exercise.gifUrl,
-                              fit: BoxFit.contain,
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                        : null,
+
+                        // Target muscles
+                        if (exercise.targetMuscles.isNotEmpty) ...[
+                          const Text(
+                            'Target Muscles',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: exercise.targetMuscles.map((muscle) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  muscle,
+                                  style: TextStyle(
+                                    fontSize: 12,
                                     color: color,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.broken_image,
-                                        size: 50,
-                                        color: Colors.grey.shade400,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'GIF not available',
-                                        style: TextStyle(
-                                          color: Colors.grey.shade600,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+
+                        // Secondary muscles
+                        if (exercise.secondaryMuscles.isNotEmpty) ...[
+                          const Text(
+                            'Secondary Muscles',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: exercise.secondaryMuscles.map((muscle) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: CupertinoColors.systemGrey6,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  muscle,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: CupertinoColors.label,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+
+                        // Instructions
+                        if (exercise.instructions.isNotEmpty) ...[
+                          const Text(
+                            'Instructions',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...exercise.instructions.asMap().entries.map((entry) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${entry.key + 1}',
+                                        style: const TextStyle(
+                                          color: CupertinoColors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-
-                      // Target muscles
-                      if (exercise.targetMuscles.isNotEmpty) ...[
-                        const Text(
-                          'Target Muscles',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: exercise.targetMuscles.map((muscle) {
-                            return Chip(
-                              label: Text(
-                                muscle,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              backgroundColor: color.withOpacity(0.1),
-                              labelStyle: TextStyle(color: color),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-
-                      // Secondary muscles
-                      if (exercise.secondaryMuscles.isNotEmpty) ...[
-                        const Text(
-                          'Secondary Muscles',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: exercise.secondaryMuscles.map((muscle) {
-                            return Chip(
-                              label: Text(
-                                muscle,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              backgroundColor: Colors.grey.shade200,
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-
-                      // Instructions
-                      if (exercise.instructions.isNotEmpty) ...[
-                        const Text(
-                          'Instructions',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ...exercise.instructions.asMap().entries.map((entry) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
+                                  const SizedBox(width: 12),
+                                  Expanded(
                                     child: Text(
-                                      '${entry.key + 1}',
+                                      entry.value,
                                       style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: CupertinoColors.systemGrey,
+                                        height: 1.5,
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    entry.value,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade700,
-                                      height: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),

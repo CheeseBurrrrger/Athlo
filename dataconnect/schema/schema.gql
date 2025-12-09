@@ -1,0 +1,70 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  photoUrl: String
+  bio: String
+  dob: Date
+  height: Float
+  weight: Float
+  fitnessGoals: [String]
+}
+
+type Workout @table {
+  user: User!
+  date: Date!
+  durationMinutes: Int!
+  workoutType: String!
+  createdAt: Timestamp!
+  notes: String
+  caloriesBurned: Float
+}
+
+type ExerciseEntry @table {
+  workout: Workout!
+  exerciseName: String!
+  sets: Int!
+  reps: Int!
+  weightKg: Float!
+  createdAt: Timestamp!
+  notes: String
+  durationSeconds: Int
+}
+
+type Meal @table {
+  user: User!
+  date: Date!
+  mealType: String!
+  createdAt: Timestamp!
+  description: String
+  totalCalories: Float
+  totalProteinGrams: Float
+  totalCarbsGrams: Float
+  totalFatGrams: Float
+}
+
+type FoodItemEntry @table {
+  meal: Meal!
+  foodName: String!
+  quantity: Float!
+  unit: String!
+  calories: Float!
+  proteinGrams: Float!
+  carbsGrams: Float!
+  fatGrams: Float!
+  createdAt: Timestamp!
+  brand: String
+  notes: String
+}
+
+type Goal @table {
+  user: User!
+  goalType: String!
+  targetValue: Float!
+  startDate: Date!
+  endDate: Date!
+  status: String!
+  createdAt: Timestamp!
+  currentValue: Float
+  notes: String
+}

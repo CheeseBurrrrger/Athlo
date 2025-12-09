@@ -1,0 +1,35 @@
+mutation CreateUser @auth(level: USER) {
+  user_insert(data: {
+    displayName: "New User",
+    email: "newuser@example.com",
+    createdAt_expr: "request.time",
+    id_expr: "uuidV4()"
+  })
+}
+
+query ListWorkoutsForUser @auth(level: USER) {
+  workouts(where: {userId: {eq_expr: "auth.uid"}}) {
+    id
+    date
+    durationMinutes
+    workoutType
+  }
+}
+
+mutation UpdateGoal @auth(level: USER) {
+  goal_update(
+    key: {id: "some-goal-id"}
+    data: {
+      currentValue: 150.0
+    }
+  )
+}
+
+query ListMeals @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  meals {
+    id
+    date
+    mealType
+    totalCalories
+  }
+}

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Material, Colors;
 import '../services/exercise_db_service.dart';
 import '../services/workout_storage_service.dart';
 import '../models/muscle.dart';
 import '../models/exercise.dart';
 import '../models/custom_workout.dart';
-import 'level_chip.dart';
 
 class AddWorkoutBottomSheet extends StatefulWidget {
   const AddWorkoutBottomSheet({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
   String? selectedMuscle;
   String? selectedLevel;
   List<Exercise> availableExercises = [];
-  Set<Exercise> selectedExercises = {}; // Changed to Set for better performance
+  Set<Exercise> selectedExercises = {};
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController durationController = TextEditingController();
@@ -76,46 +76,65 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load exercises: $e')),
-        );
+        _showErrorDialog('Failed to load exercises: $e');
       }
     }
   }
 
+  void _showErrorDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSuccessDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _saveWorkout() async {
     if (nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter workout name')),
-      );
+      _showErrorDialog('Please enter workout name');
       return;
     }
 
     if (durationController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter duration')),
-      );
+      _showErrorDialog('Please enter duration');
       return;
     }
 
     if (selectedMuscle == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select target muscle')),
-      );
+      _showErrorDialog('Please select target muscle');
       return;
     }
 
     if (selectedLevel == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select level')),
-      );
+      _showErrorDialog('Please select level');
       return;
     }
 
     if (selectedExercises.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one exercise')),
-      );
+      _showErrorDialog('Please select at least one exercise');
       return;
     }
 
@@ -134,16 +153,12 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
       await _storageService.saveWorkout(workout);
 
       if (mounted) {
-        Navigator.pop(context, true); // Return true to indicate success
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Workout created successfully! 💪')),
-        );
+        Navigator.pop(context, true);
+        _showSuccessDialog('Workout created successfully! 💪');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save workout: $e')),
-        );
+        _showErrorDialog('Failed to save workout: $e');
       }
     }
   }
@@ -170,219 +185,277 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // Handle bar
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(2),
+    return Material(
+      color: CupertinoColors.systemBackground,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: const BoxDecoration(
+          color: CupertinoColors.systemBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemGrey4,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-          ),
 
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Custom Workout',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
+            // Header
+            CupertinoNavigationBar(
+              backgroundColor: CupertinoColors.systemBackground,
+              border: null,
+              middle: const Text(
+                'Add Custom Workout',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+              ),
+              trailing: CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Text('Close'),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
-          ),
 
-          // Content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Workout Name',
-                      prefixIcon: const Icon(Icons.fitness_center),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextField(
-                    controller: durationController,
-                    decoration: InputDecoration(
-                      labelText: 'Duration (minutes)',
-                      prefixIcon: const Icon(Icons.access_time),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 16),
-
-                  const Text(
-                    'Select Level',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-
-                  Wrap(
-                    spacing: 8,
+            // Content
+            Expanded(
+              child: CupertinoScrollbar(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      LevelChip(
-                        label: 'Beginner',
-                        color: const Color(0xFF6E8CFB),
-                        isSelected: selectedLevel == 'Beginner',
-                        onSelected: (selected) {
-                          setState(() {
-                            selectedLevel = selected ? 'Beginner' : null;
-                          });
-                        },
-                      ),
-                      LevelChip(
-                        label: 'Intermediate',
-                        color: const Color(0xFF636CCB),
-                        isSelected: selectedLevel == 'Intermediate',
-                        onSelected: (selected) {
-                          setState(() {
-                            selectedLevel = selected ? 'Intermediate' : null;
-                          });
-                        },
-                      ),
-                      LevelChip(
-                        label: 'Advanced',
-                        color: const Color(0xFF50589C),
-                        isSelected: selectedLevel == 'Advanced',
-                        onSelected: (selected) {
-                          setState(() {
-                            selectedLevel = selected ? 'Advanced' : null;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Target Muscles Dropdown
-                  const Text(
-                    'Target Muscle',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-
-                  _buildMuscleDropdown(),
-
-                  const SizedBox(height: 16),
-
-                  // Exercise Selection
-                  if (selectedMuscle != null) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Select Exercises',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      // Workout Name
+                      const Text(
+                        'Workout Name',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: CupertinoColors.systemGrey,
                         ),
+                      ),
+                      const SizedBox(height: 8),
+                      CupertinoTextField(
+                        controller: nameController,
+                        placeholder: 'Enter workout name',
+                        prefix: const Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Icon(
+                            CupertinoIcons.sportscourt,
+                            color: CupertinoColors.systemGrey,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Duration
+                      const Text(
+                        'Duration (minutes)',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      CupertinoTextField(
+                        controller: durationController,
+                        placeholder: 'Enter duration',
+                        keyboardType: TextInputType.number,
+                        prefix: const Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Icon(
+                            CupertinoIcons.time,
+                            color: CupertinoColors.systemGrey,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Level Selection
+                      const Text(
+                        'Select Level',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildLevelSelector(),
+                      const SizedBox(height: 20),
+
+                      // Target Muscle
+                      const Text(
+                        'Target Muscle',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildMuscleDropdown(),
+                      const SizedBox(height: 20),
+
+                      // Exercise Selection
+                      if (selectedMuscle != null) ...[
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            const Text(
+                              'Select Exercises',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             if (selectedExercises.isNotEmpty)
                               Text(
                                 '${selectedExercises.length} selected',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey.shade600,
+                                  color: CupertinoColors.systemGrey,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            if (availableExercises.isNotEmpty && selectedExercises.length < availableExercises.length)
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedExercises = availableExercises.map((e) => e.name).cast<Exercise>().toSet();
-                                  });
-                                },
-                                child: const Text('Select All'),
-                              ),
-                            if (selectedExercises.isNotEmpty)
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedExercises.clear();
-                                  });
-                                },
-                                child: const Text('Clear'),
-                              ),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        if (availableExercises.isNotEmpty)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (selectedExercises.length < availableExercises.length)
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  child: const Text('Select All'),
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedExercises = Set.from(availableExercises);
+                                    });
+                                  },
+                                ),
+                              if (selectedExercises.isNotEmpty)
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  child: const Text('Clear'),
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedExercises.clear();
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        const SizedBox(height: 8),
+                        _buildExerciseList(),
                       ],
-                    ),
-                    const SizedBox(height: 8),
-                    _buildExerciseList(),
-                  ],
 
-                  const SizedBox(height: 24),
-                ],
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
 
-          // Bottom button
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
+            // Bottom button
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: CupertinoColors.systemBackground,
+                border: Border(
+                  top: BorderSide(
+                    color: CupertinoColors.systemGrey5,
+                    width: 0.5,
+                  ),
                 ),
-              ],
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _saveWorkout,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3C467B),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
+              ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: CupertinoButton.filled(
+                    onPressed: _saveWorkout,
                     borderRadius: BorderRadius.circular(12),
+                    child: const Text(
+                      'Create Workout',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-                child: const Text(
-                  'Create Workout',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLevelSelector() {
+    final levels = [
+      {'label': 'Beginner', 'color': const Color(0xFF6E8CFB)},
+      {'label': 'Intermediate', 'color': const Color(0xFF636CCB)},
+      {'label': 'Advanced', 'color': const Color(0xFF50589C)},
+    ];
+
+    return Row(
+      children: levels.map((level) {
+        final isSelected = selectedLevel == level['label'];
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedLevel = level['label'] as String;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? (level['color'] as Color)
+                      : CupertinoColors.systemGrey6,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected
+                        ? (level['color'] as Color)
+                        : CupertinoColors.systemGrey4,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  level['label'] as String,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? CupertinoColors.white
+                        : CupertinoColors.label,
                   ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 
@@ -391,16 +464,12 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(12),
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(8),
         ),
         child: const Row(
           children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+            CupertinoActivityIndicator(),
             SizedBox(width: 12),
             Text('Loading muscles...'),
           ],
@@ -412,37 +481,103 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(12),
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(8),
         ),
         child: const Text('No muscles available'),
       );
     }
 
-    return DropdownButtonFormField<String>(
-      value: selectedMuscle,
-      decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.track_changes),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () => _showMusclePicker(),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(8),
         ),
-        hintText: 'Select target muscle',
+        child: Row(
+          children: [
+            const Icon(
+              CupertinoIcons.scope,
+              color: CupertinoColors.systemGrey,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                selectedMuscle?.toUpperCase() ?? 'Select target muscle',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: selectedMuscle != null
+                      ? CupertinoColors.label
+                      : CupertinoColors.systemGrey,
+                ),
+              ),
+            ),
+            const Icon(
+              CupertinoIcons.chevron_down,
+              color: CupertinoColors.systemGrey,
+              size: 20,
+            ),
+          ],
+        ),
       ),
-      isExpanded: true,
-      items: _muscles!.map((muscle) {
-        return DropdownMenuItem<String>(
-          value: muscle.name,
-          child: Text(muscle.name.toUpperCase()),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          selectedMuscle = value;
-          if (value != null) {
-            _loadExercises(value);
-          }
-        });
-      },
+    );
+  }
+
+  void _showMusclePicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 250,
+        color: CupertinoColors.systemBackground,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  const Text(
+                    'Select Muscle',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text('Done'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      if (selectedMuscle != null) {
+                        _loadExercises(selectedMuscle!);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: CupertinoPicker(
+                itemExtent: 32,
+                onSelectedItemChanged: (int index) {
+                  setState(() {
+                    selectedMuscle = _muscles![index].name;
+                  });
+                },
+                children: _muscles!.map((muscle) {
+                  return Center(
+                    child: Text(muscle.name.toUpperCase()),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -450,10 +585,14 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
     if (_isLoadingExercises) {
       return Container(
         padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: const Center(
           child: Column(
             children: [
-              CircularProgressIndicator(),
+              CupertinoActivityIndicator(),
               SizedBox(height: 16),
               Text('Loading exercises...'),
             ],
@@ -466,8 +605,8 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(12),
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(8),
         ),
         child: const Center(
           child: Text('No exercises available for this muscle'),
@@ -478,39 +617,77 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
     return Container(
       constraints: const BoxConstraints(maxHeight: 400),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(12),
+        color: CupertinoColors.systemGrey6,
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: availableExercises.length,
-        itemBuilder: (context, index) {
-          final exercise = availableExercises[index];
-          final isSelected = selectedExercises.contains(exercise);
+      child: CupertinoScrollbar(
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: availableExercises.length,
+          itemBuilder: (context, index) {
+            final exercise = availableExercises[index];
+            final isSelected = selectedExercises.contains(exercise);
 
-          return CheckboxListTile(
-            title: Text(
-              exercise.name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            ),
-            subtitle: Text(
-              exercise.equipment,
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-            ),
-            value: isSelected,
-            activeColor: const Color(0xFF3C467B),
-            dense: true,
-            onChanged: (bool? value) {
-              setState(() {
-                if (value == true) {
-                  selectedExercises.add(exercise);
-                } else {
-                  selectedExercises.remove(exercise);
-                }
-              });
-            },
-          );
-        },
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedExercises.remove(exercise);
+                  } else {
+                    selectedExercises.add(exercise);
+                  }
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: CupertinoColors.systemGrey5,
+                      width: 0.5,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      isSelected
+                          ? CupertinoIcons.check_mark_circled_solid
+                          : CupertinoIcons.circle,
+                      color: isSelected
+                          ? CupertinoColors.activeBlue
+                          : CupertinoColors.systemGrey3,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            exercise.name,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            exercise.equipment,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

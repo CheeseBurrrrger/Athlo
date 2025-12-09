@@ -1,4 +1,3 @@
-// import 'package:athlo/workout_page.dart';
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 import 'nutrition_page.dart';

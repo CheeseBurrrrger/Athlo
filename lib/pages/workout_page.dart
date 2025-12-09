@@ -1,9 +1,11 @@
 import '../pages/custom_workout_detail_page.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Material, Colors;
 import '../widgets/workout_card.dart';
 import '../widgets/popular_workout_card.dart';
 import '../widgets/quick_stat_card.dart';
 import '../widgets/add_workout_bottom_sheet.dart';
+import '../widgets/edit_workout_bottom_sheet.dart';
 import '../services/workout_storage_service.dart';
 import '../models/custom_workout.dart';
 import 'workout_detail_page.dart';
@@ -45,21 +47,34 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  Future<void> _deleteWorkout(String workoutId) async {
-    // Show confirmation dialog
-    final confirmed = await showDialog<bool>(
+  Future<void> _editWorkout(CustomWorkout workout) async {
+    final result = await showCupertinoModalPopup(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => EditWorkoutBottomSheet(workout: workout),
+    );
+
+    if (result == true) {
+      await _loadCustomWorkouts();
+      if (mounted) {
+        _showSuccessDialog('Workout updated successfully');
+      }
+    }
+  }
+
+  Future<void> _deleteWorkout(String workoutId) async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
         title: const Text('Delete Workout'),
         content: const Text('Are you sure you want to delete this workout?'),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('Cancel'),
           ),
-          TextButton(
+          CupertinoDialogAction(
+            isDestructiveAction: true,
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],
@@ -72,18 +87,45 @@ class _WorkoutPageState extends State<WorkoutPage> {
         await _loadCustomWorkouts();
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Workout deleted')),
-          );
+          _showSuccessDialog('Workout deleted');
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to delete workout: $e')),
-          );
+          _showErrorDialog('Failed to delete workout: $e');
         }
       }
     }
+  }
+
+  void _showSuccessDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Color _getColorFromHex(String hexColor) {
@@ -94,202 +136,203 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
+  // Helper methods for responsive grid
+  int _getGridCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1200) {
+      return 6; // 6 columns for very large screens
+    } else if (width > 900) {
+      return 4; // 4 columns for large screens
+    } else if (width > 600) {
+      return 3; // 3 columns for tablets
+    } else {
+      return 2; // 2 columns for mobile
+    }
+  }
+
+  double _getGridChildAspectRatio(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1200) {
+      return 0.75; // More rectangular cards on very large screens
+    } else if (width > 900) {
+      return 0.7; // Slightly taller cards on large screens
+    } else if (width > 600) {
+      return 0.65; // Balanced cards on tablets
+    } else {
+      return 0.6; // Taller cards on mobile
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text(
           'Workout Plans',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C467B)),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final result = await showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const AddWorkoutBottomSheet(),
-              );
+        backgroundColor: CupertinoColors.white,
+        border: null,
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.add),
+          onPressed: () async {
+            final result = await showCupertinoModalPopup(
+              context: context,
+              builder: (context) => const AddWorkoutBottomSheet(),
+            );
 
-              // Reload workouts if a new one was added
-              if (result == true) {
-                _loadCustomWorkouts();
-              }
-            },
-          ),
-        ],
+            if (result == true) {
+              _loadCustomWorkouts();
+            }
+          },
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF3C467B), Color(0xFF50589C)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      child: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            // Header Banner
+            SliverToBoxAdapter(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF3C467B), Color(0xFF50589C)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Raih Target Fitness Anda',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Pilih program latihan sesuai level dan tujuan Anda',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: QuickStatCard(
-                      value: '12',
-                      label: 'Workouts\nCompleted',
-                      color: const Color(0xFF6E8CFB),
-                      icon: Icons.check_circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: QuickStatCard(
-                      value: '45',
-                      label: 'Minutes\nToday',
-                      color: const Color(0xFF636CCB),
-                      icon: Icons.timer,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: QuickStatCard(
-                      value: '5',
-                      label: 'Day\nStreak',
-                      color: const Color(0xFF50589C),
-                      icon: Icons.local_fire_department,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Custom Workouts Section
-            if (customWorkouts.isNotEmpty) ...[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'My Custom Workouts',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '${customWorkouts.length}',
+                      'Raih Target Fitness Anda',
                       style: TextStyle(
-                        fontSize: 16,
+                        color: CupertinoColors.white,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Pilih program latihan sesuai level dan tujuan Anda',
+                      style: TextStyle(
+                        color: CupertinoColors.white.withOpacity(0.7),
+                        fontSize: 14,
                       ),
                     ),
                   ],
                 ),
               ),
+            ),
 
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  int crossAxisCount;
-                  double childAspectRatio;
-
-                  if (constraints.maxWidth > 1200) {
-                    crossAxisCount = 4;
-                    childAspectRatio = 0.9;
-                  } else if (constraints.maxWidth > 800) {
-                    crossAxisCount = 3;
-                    childAspectRatio = 0.75;
-                  } else {
-                    crossAxisCount = 2;
-                    childAspectRatio = 0.6;
-                  }
-
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: childAspectRatio,
+            // Quick Stats
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: QuickStatCard(
+                        value: '12',
+                        label: 'Workouts\nCompleted',
+                        color: const Color(0xFF6E8CFB),
+                        icon: CupertinoIcons.check_mark_circled_solid,
+                      ),
                     ),
-                    itemCount: customWorkouts.length,
-                    itemBuilder: (context, index) {
-                      final workout = customWorkouts[index];
-                      return _buildCustomWorkoutCard(workout);
-                    },
-                  );
-                },
-              ),
-
-              const SizedBox(height: 24),
-            ],
-
-            // Featured Programs Section
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Text(
-                'Featured Programs',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: QuickStatCard(
+                        value: '45',
+                        label: 'Minutes\nToday',
+                        color: const Color(0xFF636CCB),
+                        icon: CupertinoIcons.timer,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: QuickStatCard(
+                        value: '5',
+                        label: 'Day\nStreak',
+                        color: const Color(0xFF50589C),
+                        icon: CupertinoIcons.flame_fill,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            LayoutBuilder(
-              builder: (context, constraints) {
-                int crossAxisCount;
-                double childAspectRatio;
+            // Custom Workouts Section
+            if (customWorkouts.isNotEmpty) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'My Custom Workouts',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${customWorkouts.length}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-                if (constraints.maxWidth > 1200) {
-                  crossAxisCount = 4;
-                  childAspectRatio = 0.9;
-                } else if (constraints.maxWidth > 800) {
-                  crossAxisCount = 3;
-                  childAspectRatio = 0.75;
-                } else {
-                  crossAxisCount = 2;
-                  childAspectRatio = 0.6;
-                }
-
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
+                    crossAxisCount: _getGridCrossAxisCount(context),
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    childAspectRatio: childAspectRatio,
+                    childAspectRatio: _getGridChildAspectRatio(context),
                   ),
-                  itemCount: workoutPrograms.length,
-                  itemBuilder: (context, index) {
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final workout = customWorkouts[index];
+                      return _buildCustomWorkoutCard(workout);
+                    },
+                    childCount: customWorkouts.length,
+                  ),
+                ),
+              ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
+
+            // Featured Programs
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: Text(
+                  'Featured Programs',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _getGridCrossAxisCount(context),
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: _getGridChildAspectRatio(context),
+                ),
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) {
                     final program = workoutPrograms[index];
                     return WorkoutCard(
                       title: program['title']!,
@@ -302,39 +345,48 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       badge: program['badge']!,
                     );
                   },
-                );
-              },
-            ),
-
-            const SizedBox(height: 24),
-
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Text(
-                'Popular Workouts',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  childCount: workoutPrograms.length,
+                ),
               ),
             ),
 
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: popularWorkouts.length,
-              itemBuilder: (context, index) {
-                final workout = popularWorkouts[index];
-                return PopularWorkoutCard(
-                  title: workout['title']!,
-                  duration: workout['duration']!,
-                  calories: workout['calories']!,
-                  level: workout['level']!,
-                  icon: workout['icon'] as IconData,
-                  color: workout['color'] as Color,
-                );
-              },
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+            // Popular Workouts
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: Text(
+                  'Popular Workouts',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
 
-            const SizedBox(height: 24),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                    final workout = popularWorkouts[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: PopularWorkoutCard(
+                        title: workout['title']!,
+                        duration: workout['duration']!,
+                        calories: workout['calories']!,
+                        level: workout['level']!,
+                        icon: workout['icon'] as IconData,
+                        color: workout['color'] as Color,
+                      ),
+                    );
+                  },
+                  childCount: popularWorkouts.length,
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
           ],
         ),
       ),
@@ -347,10 +399,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => CustomWorkoutDetailPage(
-              workout: workout,
-            ),
+          CupertinoPageRoute(
+            builder: (context) => CustomWorkoutDetailPage(workout: workout),
           ),
         );
       },
@@ -359,12 +409,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: CupertinoColors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200, width: 1),
+          border: Border.all(color: CupertinoColors.systemGrey5, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: CupertinoColors.black.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -388,8 +438,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       topRight: Radius.circular(16),
                     ),
                   ),
-                  child: Center(
-                    child: Icon(Icons.fitness_center, size: 50, color: Colors.white),
+                  child: const Center(
+                    child: Icon(
+                      CupertinoIcons.sportscourt,
+                      size: 50,
+                      color: CupertinoColors.white,
+                    ),
                   ),
                 ),
                 Expanded(
@@ -403,7 +457,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: CupertinoColors.black,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -411,23 +465,37 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                            const Icon(
+                              CupertinoIcons.time,
+                              size: 14,
+                              color: CupertinoColors.systemGrey,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               workout.duration,
-                              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: CupertinoColors.systemGrey,
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.fitness_center, size: 14, color: Colors.grey.shade600),
+                            const Icon(
+                              CupertinoIcons.sportscourt,
+                              size: 14,
+                              color: CupertinoColors.systemGrey,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 '${workout.exercises.length} exercises',
-                                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: CupertinoColors.systemGrey,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -461,7 +529,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: CupertinoColors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -477,10 +545,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
             Positioned(
               bottom: 8,
               right: 8,
-              child: IconButton(
-                icon: const Icon(Icons.more_vert, size: 20),
+              child: CupertinoButton(
                 padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
+                minSize: 20,
+                child: const Icon(CupertinoIcons.ellipsis, size: 20),
                 onPressed: () => _showWorkoutOptions(workout),
               ),
             ),
@@ -491,63 +559,57 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void _showWorkoutOptions(CustomWorkout workout) {
-    showModalBottomSheet(
+    showCupertinoModalPopup(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Text(
-              workout.title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            ListTile(
-              leading: const Icon(Icons.info_outline, color: Color(0xFF3C467B)),
-              title: const Text('View Details'),
-              onTap: () {
-                Navigator.pop(context);
-                _showWorkoutDetails(workout);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('Delete Workout'),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteWorkout(workout.id);
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
+      builder: (context) => CupertinoActionSheet(
+        title: Text(
+          workout.title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _showWorkoutDetails(workout);
+            },
+            child: const Text('View Details'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _editWorkout(workout);
+            },
+            child: const Text('Edit Workout'),
+          ),
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              _deleteWorkout(workout.id);
+            },
+            child: const Text('Delete Workout'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
         ),
       ),
     );
   }
 
   void _showWorkoutDetails(CustomWorkout workout) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => CupertinoAlertDialog(
         title: Text(workout.title),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 12),
               _buildDetailRow('Duration', workout.duration),
               _buildDetailRow('Level', workout.level),
               _buildDetailRow('Target Muscle', workout.targetMuscle),
@@ -557,7 +619,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 8),
-              // Fixed: Now iterating over Exercise objects, not Strings
               ...workout.exercises.map((exercise) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
@@ -577,9 +638,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           ),
                           Text(
                             exercise.equipment,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: CupertinoColors.systemGrey,
                             ),
                           ),
                         ],
@@ -592,7 +653,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ),
         ),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.pop(context),
             child: const Text('Close'),
           ),
@@ -600,7 +661,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       ),
     );
   }
-
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
@@ -630,7 +690,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'level': 'Intermediate',
       'target': 'Full Body',
       'exercises': '8 exercises',
-      'icon': Icons.fitness_center,
+      'icon': CupertinoIcons.sportscourt,
       'color': const Color(0xFF6E8CFB),
       'badge': 'Popular',
     },
@@ -640,7 +700,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'level': 'Beginner',
       'target': 'All Muscles',
       'exercises': '10 exercises',
-      'icon': Icons.settings_accessibility,
+      'icon': CupertinoIcons.person,
       'color': const Color(0xFF636CCB),
       'badge': 'New',
     },
@@ -650,7 +710,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'level': 'Advanced',
       'target': 'Chest, Back, Arms',
       'exercises': '12 exercises',
-      'icon': Icons.accessibility_new,
+      'icon': CupertinoIcons.arrow_up_circle,
       'color': const Color(0xFF50589C),
       'badge': '',
     },
@@ -660,7 +720,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'level': 'Intermediate',
       'target': 'Legs, Glutes',
       'exercises': '9 exercises',
-      'icon': Icons.directions_run,
+      'icon': CupertinoIcons.arrow_down_circle,
       'color': const Color(0xFF6E8CFB),
       'badge': 'Trending',
     },
@@ -670,7 +730,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'level': 'All Levels',
       'target': 'Abs, Core',
       'exercises': '6 exercises',
-      'icon': Icons.self_improvement,
+      'icon': CupertinoIcons.circle_grid_3x3,
       'color': const Color(0xFF3C467B),
       'badge': '',
     },
@@ -680,7 +740,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'level': 'Advanced',
       'target': 'Full Body',
       'exercises': '15 exercises',
-      'icon': Icons.sports_gymnastics,
+      'icon': CupertinoIcons.bolt,
       'color': const Color(0xFF636CCB),
       'badge': '',
     },
@@ -692,7 +752,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'duration': '25 min',
       'calories': '300 cal',
       'level': 'Beginner',
-      'icon': Icons.directions_run,
+      'icon': CupertinoIcons.flame,
       'color': const Color(0xFF6E8CFB),
     },
     {
@@ -700,7 +760,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'duration': '20 min',
       'calories': '400 cal',
       'level': 'Advanced',
-      'icon': Icons.flash_on,
+      'icon': CupertinoIcons.bolt_fill,
       'color': const Color(0xFF636CCB),
     },
     {
@@ -708,7 +768,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'duration': '40 min',
       'calories': '150 cal',
       'level': 'All Levels',
-      'icon': Icons.self_improvement,
+      'icon': CupertinoIcons.heart,
       'color': const Color(0xFF50589C),
     },
   ];
