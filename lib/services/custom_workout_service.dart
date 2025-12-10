@@ -13,7 +13,37 @@ class WorkoutService{
     DocumentReference documentReference = userRef.doc(docId);
     documentReference.set(customWorkout.toJson());
   }
-  Stream<QuerySnapshot<Object?>> read(){
+  Stream<QuerySnapshot<Object?>> readAll(){
     return userRef.snapshots();
-}
+  }
+  // Stream<List<CustomWorkout>> readSpecificUser(String userId) {
+  //   return userRef
+  //       .where('uId', isEqualTo: userId)
+  //       .snapshots()
+  //       .map((snapshot) => snapshot.docs
+  //       .map((doc) => CustomWorkout.fromJson(doc.data() as Map<String, dynamic>))
+  //       .toList());
+  // }
+  Stream<List<CustomWorkout>> readSpecificUser(String userId) {
+    return userRef
+        .where('uId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => CustomWorkout.fromFirestore(doc))  // Changed to fromFirestore
+        .toList());
+  }
+  // void hapus (CustomWorkout customWorkout){
+  //   DocumentReference documentReference = userRef.doc(customWorkout.title);
+  //   documentReference.delete();
+  // }
+  Future<void> hapus(String documentId) async {
+    try {
+      DocumentReference documentReference = userRef.doc(documentId);
+      await documentReference.delete();
+      print('Document deleted: $documentId');
+    } catch (e) {
+      print('Error deleting document: $e');
+      rethrow;
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:athlo/services/auth_service.dart';
 import 'package:athlo/services/custom_workout_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -65,7 +66,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  Future<void> _deleteWorkout(String workoutId) async {
+  Future<void> _deleteWorkout(CustomWorkout workout) async {
+    print('Attempting to delete workout with ID: ${workout.id}'); // Debug print
+
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
@@ -87,8 +90,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     if (confirmed == true) {
       try {
-        await _storageService.deleteWorkout(workoutId);
-        await _loadCustomWorkouts();
+        await workoutService.hapus(workout.id);
 
         if (mounted) {
           _showSuccessDialog('Workout deleted');
@@ -169,6 +171,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final uId = authService.value.currentUser!.uid;
+    print("userId : "+uId);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text(
@@ -268,10 +272,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            StreamBuilder<QuerySnapshot>(
-              stream: workoutService.read(),
+            StreamBuilder<List>(
+              stream: workoutService.readSpecificUser(uId),
               builder: (context, snapshot) {
-                // Loading - must return Sliver
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SliverToBoxAdapter(
                     child: Center(
@@ -282,8 +285,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     ),
                   );
                 }
-
-                // Error - must return Sliver
                 if (snapshot.hasError) {
                   return SliverToBoxAdapter(
                     child: Padding(
@@ -295,18 +296,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     ),
                   );
                 }
-
-                final workoutDocs = snapshot.data?.docs ?? [];
-                final customWorkouts = workoutDocs.map((doc) {
-                  return CustomWorkout.fromFirestore(doc);
-                }).toList();
-
-                // Empty - must return Sliver
+                final customWorkouts = snapshot.data ?? [];
                 if (customWorkouts.isEmpty) {
                   return const SliverToBoxAdapter(child: SizedBox.shrink());
                 }
-
-                // Data exists - return multiple slivers wrapped in SliverMainAxisGroup
                 return SliverMainAxisGroup(
                   slivers: [
                     SliverToBoxAdapter(
@@ -354,7 +347,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               },
             ),
 
-            // Featured Programs
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -628,7 +620,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
-              _deleteWorkout(workout.id);
+              _deleteWorkout(workout); // Changed from workout.id to workout
             },
             child: const Text('Delete Workout'),
           ),
