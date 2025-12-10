@@ -1,7 +1,10 @@
+import 'package:athlo/models/custom_workout.dart' hide CustomWorkout;
+import 'package:athlo/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Material, Colors;
-import '../services/exercise_db_service.dart';
 import '../services/workout_storage_service.dart';
+import '../services/exercise_db_service.dart';
+import '../services/custom_workout_service.dart';
 import '../models/muscle.dart';
 import '../models/exercise.dart';
 import '../models/custom_workout.dart';
@@ -14,6 +17,7 @@ class AddWorkoutBottomSheet extends StatefulWidget {
 }
 
 class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
+  WorkoutService workoutService = new WorkoutService();
   final ExerciseDBService _exerciseDBService = ExerciseDBService();
   final WorkoutStorageService _storageService = WorkoutStorageService();
 
@@ -138,8 +142,9 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
       return;
     }
 
-    final workout = CustomWorkout(
+    var workout = CustomWorkout(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
+      uId: authService.value.currentUser!.uid.toString(),
       title: nameController.text,
       duration: '${durationController.text} min',
       level: selectedLevel!,
@@ -150,8 +155,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
     );
 
     try {
-      await _storageService.saveWorkout(workout);
-
+      workoutService.add(workout);
       if (mounted) {
         Navigator.pop(context, true);
         _showSuccessDialog('Workout created successfully! 💪');

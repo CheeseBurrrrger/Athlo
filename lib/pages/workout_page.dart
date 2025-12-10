@@ -1,3 +1,6 @@
+import 'package:athlo/services/custom_workout_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../pages/custom_workout_detail_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Material, Colors;
@@ -8,7 +11,6 @@ import '../widgets/add_workout_bottom_sheet.dart';
 import '../widgets/edit_workout_bottom_sheet.dart';
 import '../services/workout_storage_service.dart';
 import '../models/custom_workout.dart';
-import 'workout_detail_page.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage({Key? key}) : super(key: key);
@@ -19,6 +21,8 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   final WorkoutStorageService _storageService = WorkoutStorageService();
+  WorkoutService workoutService = new WorkoutService();
+
   List<CustomWorkout> customWorkouts = [];
   bool isLoading = true;
 
@@ -264,52 +268,91 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            // Custom Workouts Section
-            if (customWorkouts.isNotEmpty) ...[
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'My Custom Workouts',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            StreamBuilder<QuerySnapshot>(
+              stream: workoutService.read(),
+              builder: (context, snapshot) {
+                // Loading - must return Sliver
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.0),
+                        child: CupertinoActivityIndicator(),
                       ),
-                      Text(
-                        '${customWorkouts.length}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: CupertinoColors.systemGrey,
+                    ),
+                  );
+                }
+
+                // Error - must return Sliver
+                if (snapshot.hasError) {
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: CupertinoColors.systemRed),
+                      ),
+                    ),
+                  );
+                }
+
+                final workoutDocs = snapshot.data?.docs ?? [];
+                final customWorkouts = workoutDocs.map((doc) {
+                  return CustomWorkout.fromFirestore(doc);
+                }).toList();
+
+                // Empty - must return Sliver
+                if (customWorkouts.isEmpty) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
+
+                // Data exists - return multiple slivers wrapped in SliverMainAxisGroup
+                return SliverMainAxisGroup(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'My Custom Workouts',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              '${customWorkouts.length}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: CupertinoColors.systemGrey,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _getGridCrossAxisCount(context),
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: _getGridChildAspectRatio(context),
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      final workout = customWorkouts[index];
-                      return _buildCustomWorkoutCard(workout);
-                    },
-                    childCount: customWorkouts.length,
-                  ),
-                ),
-              ),
-
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
-            ],
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: _getGridCrossAxisCount(context),
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: _getGridChildAspectRatio(context),
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                            final workout = customWorkouts[index];
+                            return _buildCustomWorkoutCard(workout);
+                          },
+                          childCount: customWorkouts.length,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
 
             // Featured Programs
             const SliverToBoxAdapter(

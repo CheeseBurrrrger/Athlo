@@ -1,3 +1,4 @@
+import 'package:athlo/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../models/custom_workout.dart';
 import '../models/exercise.dart';
@@ -127,7 +128,8 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
     try {
       final updatedWorkout = CustomWorkout(
-        id: widget.workout.id, // Keep the same ID
+        id: widget.workout.id,
+        uId: authService.value.currentUser!.uid,
         title: _titleController.text,
         duration: _durationController.text,
         level: _selectedLevel,
@@ -273,7 +275,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                     const SizedBox(height: 16),
 
-                    // Target Muscle
                     isLoadingMuscles
                         ? const Center(child: CircularProgressIndicator())
                         : DropdownButtonFormField<String>(
