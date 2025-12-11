@@ -1,3 +1,4 @@
+import 'package:athlo/pages/active_workout_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Material, Colors;
 import '../models/custom_workout.dart';
@@ -184,36 +185,52 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                       }),
 
                       const SizedBox(height: 24),
-
-                      // Start Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: CupertinoButton.filled(
-                          onPressed: () {
-                            showCupertinoDialog(
-                              context: context,
-                              builder: (context) => CupertinoAlertDialog(
-                                content: const Text('Starting workout! 💪'),
-                                actions: [
-                                  CupertinoDialogAction(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: const Text(
-                            'Start Workout',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+        SizedBox(
+          width: double.infinity,
+          child: CupertinoButton.filled(
+            onPressed: () {
+              // Show confirmation dialog
+              showCupertinoDialog(
+                context: context,
+                builder: (context) => CupertinoAlertDialog(
+                  title: const Text('Start Workout?'),
+                  content: Text('Ready to start ${workout.title}?'),
+                  actions: [
+                    CupertinoDialogAction(
+                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    CupertinoDialogAction(
+                      isDefaultAction: true,
+                      child: const Text('Start'),
+                      onPressed: () {
+                        Navigator.pop(context); // Close dialog
+                        // Navigate to Active Workout
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => ActiveWorkoutPage(
+                              workout: workout,
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(12),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: const Text(
+              'Start Workout',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
                       const SizedBox(height: 24),
                     ],
                   ),

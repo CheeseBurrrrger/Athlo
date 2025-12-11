@@ -36,7 +36,15 @@ class WorkoutService{
   //   DocumentReference documentReference = userRef.doc(customWorkout.title);
   //   documentReference.delete();
   // }
-  Future<void> hapus(String documentId) async {
+  // void edit (CustomWorkout customWorkout){
+  //   DocumentReference documentReference = userRef.doc(customWorkout.id);
+  //   documentReference.update(customWorkout.toJson());
+  // }
+  Future<void> edit(CustomWorkout customWorkout) async {
+    DocumentReference documentReference = userRef.doc(customWorkout.id);
+    await documentReference.update(customWorkout.toJson());
+  }
+  Future<void> delete(String documentId) async {
     try {
       DocumentReference documentReference = userRef.doc(documentId);
       await documentReference.delete();

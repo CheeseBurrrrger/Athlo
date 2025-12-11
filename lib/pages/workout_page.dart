@@ -90,7 +90,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     if (confirmed == true) {
       try {
-        await workoutService.hapus(workout.id);
+        await workoutService.delete(workout.id);
 
         if (mounted) {
           _showSuccessDialog('Workout deleted');

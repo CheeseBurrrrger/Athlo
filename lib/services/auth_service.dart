@@ -18,12 +18,14 @@ class AuthService{
       );
     }
   }
+
   Future<UserCredential> signIn({
     required String email,
     required String password,
 }) async {
     return await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
+
   Future<UserCredential> googleSignIn() async {
   try{
     initSignIn();
