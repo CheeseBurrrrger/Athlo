@@ -4,6 +4,7 @@ import 'nutrition_page.dart';
 import 'community.dart';
 import 'progress_tracker.dart';
 import 'pages/workout_page.dart';
+
 class MainNavigation extends StatefulWidget {
   const MainNavigation({Key? key}) : super(key: key);
 
@@ -12,12 +13,12 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2; // mulai dari tengah biar tidak error saat awal
 
   final List<Widget> _pages = [
     const ProfilePage(),
     WorkoutPage(),
-    const FitnessApp(),
+    const ActivityFeedPage(),
     const ProgressTrackerPage(),
     NutritionGridApp(),
   ];
@@ -32,107 +33,102 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
+
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: const Color(0xFF3C467B),
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withOpacity(0.5),
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            elevation: 0,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person, size: 28),
-                activeIcon: Icon(Icons.person, size: 32),
-                label: 'Profile',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.fitness_center, size: 28),
-                activeIcon: Icon(Icons.fitness_center, size: 32),
-                label: 'Workout',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.people, size: 28),
-                activeIcon: Icon(Icons.people, size: 32),
-                label: 'Community',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.show_chart, size: 28),
-                activeIcon: Icon(Icons.show_chart, size: 32),
-                label: 'Progress',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.restaurant_menu, size: 28),
-                activeIcon: Icon(Icons.restaurant_menu, size: 32),
-                label: 'Nutrition',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Placeholder page for pages you haven't created yet
-class PlaceholderPage extends StatelessWidget {
-  final String title;
-  final IconData icon;
-
-  const PlaceholderPage({
-    Key? key,
-    required this.title,
-    required this.icon,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF3C467B),
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        height: 90,
+        color: const Color(0xFF1974F5),
+        child: Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
           children: [
-            Icon(icon, size: 100, color: const Color(0xFF3C467B).withOpacity(0.3)),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black54,
+            // IKON NAVBAR BIASA
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _navItem(Icons.person, 0),
+                _navItem(Icons.fitness_center, 1),
+                _navItem(Icons.people, 2),
+                _navItem(Icons.show_chart, 3),
+                _navItem(Icons.restaurant_menu, 4),
+              ],
+            ),
+
+            // ⭐ FLOATING CIRCLE - HANYA NAIK, TIDAK BERGESER X
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              top: -15,
+              left: _getCircleX(context, _selectedIndex) - 24, // hitung posisi icon
+              child: Container(
+                width: 65,
+                height: 65,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'Coming Soon! 🚀',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+
+            // ⭐ ICON DI ATAS CIRCLE
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              top: 2,
+              left: _getCircleX(context, _selectedIndex) - 8,
+              child: Icon(
+                _getIcon(_selectedIndex),
+                size: 30,
+                color: const Color(0xFF1974F5),
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
+  // Mengambil posisi X dari icon yg dipilih
+  double _getCircleX(BuildContext context, int index) {
+    final width = MediaQuery.of(context).size.width;
+    final itemWidth = width / 5;
+    return itemWidth * index + itemWidth / 2;
+  }
+
+  // Mengambil icon sesuai index
+  IconData _getIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icons.person;
+      case 1:
+        return Icons.fitness_center;
+      case 2:
+        return Icons.people;
+      case 3:
+        return Icons.show_chart;
+      case 4:
+        return Icons.restaurant_menu;
+      default:
+        return Icons.circle;
+    }
+  }
+
+  // Tampilan icon navbar biasa
+  Widget _navItem(IconData icon, int index) {
+    final isActive = _selectedIndex == index;
+
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: Icon(
+        icon,
+        size: 28,
+        color: isActive ? Colors.transparent : Colors.white,
+      ),
+    );
+  }
+
 }

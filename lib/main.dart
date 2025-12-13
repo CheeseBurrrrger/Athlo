@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Multi-Platform App',
       theme: ThemeData(
+        useMaterial3: true,
         primarySwatch: Colors.blue,
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
