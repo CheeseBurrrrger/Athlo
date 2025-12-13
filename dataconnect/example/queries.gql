@@ -8,7 +8,7 @@ mutation CreateUser @auth(level: USER) {
 }
 
 query ListWorkoutsForUser @auth(level: USER) {
-  workouts(where: {userId: {eq_expr: "auth.uid"}}) {
+  workouts(where: {userID: {eq_expr: "auth.uid"}}) {
     id
     date
     durationMinutes

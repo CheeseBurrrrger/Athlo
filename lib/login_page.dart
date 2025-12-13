@@ -17,6 +17,24 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   String errorMessage = '';
 
+  Future<void> _devQuickLogin() async {
+    try {
+      await authService.value.signIn(
+        email: 'javierhm04@gmail.com',
+        password: 'Password_123',
+      );
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        errorMessage = e.message ?? 'Dev login failed';
+      });
+    }
+  }
+
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -238,6 +256,22 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: const Text('continue with Google', style: TextStyle(fontSize: 16)),
           ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: _devQuickLogin,
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              side: const BorderSide(color: Colors.redAccent),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'DEV: Quick Login',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
