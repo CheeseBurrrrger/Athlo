@@ -10,7 +10,7 @@ import 'dart:async';
 class ActiveWorkoutPage extends StatefulWidget {
   final CustomWorkout workout;
 
-  const ActiveWorkoutPage({Key? key, required this.workout}) : super(key: key);
+  const ActiveWorkoutPage({super.key, required this.workout});
 
   @override
   State<ActiveWorkoutPage> createState() => _ActiveWorkoutPageState();
@@ -166,7 +166,6 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
     );
   }
 
-
   void _showFeedback(String message) {
     showCupertinoDialog(
       context: context,
@@ -208,8 +207,8 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
       navigationBar: CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.xmark),
           onPressed: _quitWorkout,
+          child: const Icon(CupertinoIcons.xmark),
         ),
         middle: Text(
           '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
@@ -233,9 +232,7 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
                   value: session.progressPercentage / 100,
                   backgroundColor: CupertinoColors.systemGrey5,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    widget.workout.color != null
-                        ? Color(int.parse(widget.workout.color!))
-                        : CupertinoColors.activeBlue,
+                    Color(int.parse(widget.workout.color!)),
                   ),
                 ),
               ),
@@ -371,11 +368,11 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
                       child: CupertinoButton(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         color: CupertinoColors.systemGrey5,
+                        onPressed: _previousExercise,
                         child: const Text(
                           'Previous',
                           style: TextStyle(color: CupertinoColors.black),
                         ),
-                        onPressed: _previousExercise,
                       ),
                     ),
                   if (currentExerciseIndex > 0) const SizedBox(width: 12),

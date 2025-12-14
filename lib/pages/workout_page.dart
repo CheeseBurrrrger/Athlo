@@ -14,7 +14,7 @@ import '../services/workout_storage_service.dart';
 import '../models/custom_workout.dart';
 
 class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({Key? key}) : super(key: key);
+  const WorkoutPage({super.key});
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -22,7 +22,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   final WorkoutStorageService _storageService = WorkoutStorageService();
-  WorkoutService workoutService = new WorkoutService();
+  WorkoutService workoutService = WorkoutService();
 
   List<CustomWorkout> customWorkouts = [];
   bool isLoading = true;
@@ -172,7 +172,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     final uId = authService.value.currentUser!.uid;
-    print("userId : "+uId);
+    print("userId : $uId");
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text(
@@ -291,7 +291,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       padding: const EdgeInsets.all(24.0),
                       child: Text(
                         'Error: ${snapshot.error}',
-                        style: const TextStyle(color: CupertinoColors.systemRed),
+                        style: const TextStyle(
+                          color: CupertinoColors.systemRed,
+                        ),
                       ),
                     ),
                   );
@@ -310,7 +312,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           children: [
                             const Text(
                               'My Custom Workouts',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               '${customWorkouts.length}',
@@ -333,13 +338,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           mainAxisSpacing: 16,
                           childAspectRatio: _getGridChildAspectRatio(context),
                         ),
-                        delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                            final workout = customWorkouts[index];
-                            return _buildCustomWorkoutCard(workout);
-                          },
-                          childCount: customWorkouts.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final workout = customWorkouts[index];
+                          return _buildCustomWorkoutCard(workout);
+                        }, childCount: customWorkouts.length),
                       ),
                     ),
                   ],
@@ -366,22 +368,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   mainAxisSpacing: 16,
                   childAspectRatio: _getGridChildAspectRatio(context),
                 ),
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final program = workoutPrograms[index];
-                    return WorkoutCard(
-                      title: program['title']!,
-                      duration: program['duration']!,
-                      level: program['level']!,
-                      target: program['target']!,
-                      exercises: program['exercises']!,
-                      icon: program['icon'] as IconData,
-                      color: program['color'] as Color,
-                      badge: program['badge']!,
-                    );
-                  },
-                  childCount: workoutPrograms.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final program = workoutPrograms[index];
+                  return WorkoutCard(
+                    title: program['title']!,
+                    duration: program['duration']!,
+                    level: program['level']!,
+                    target: program['target']!,
+                    exercises: program['exercises']!,
+                    icon: program['icon'] as IconData,
+                    color: program['color'] as Color,
+                    badge: program['badge']!,
+                  );
+                }, childCount: workoutPrograms.length),
               ),
             ),
 
@@ -401,23 +400,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final workout = popularWorkouts[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: PopularWorkoutCard(
-                        title: workout['title']!,
-                        duration: workout['duration']!,
-                        calories: workout['calories']!,
-                        level: workout['level']!,
-                        icon: workout['icon'] as IconData,
-                        color: workout['color'] as Color,
-                      ),
-                    );
-                  },
-                  childCount: popularWorkouts.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final workout = popularWorkouts[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: PopularWorkoutCard(
+                      title: workout['title']!,
+                      duration: workout['duration']!,
+                      calories: workout['calories']!,
+                      level: workout['level']!,
+                      icon: workout['icon'] as IconData,
+                      color: workout['color'] as Color,
+                    ),
+                  );
+                }, childCount: popularWorkouts.length),
               ),
             ),
 
@@ -538,7 +534,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: color.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -582,9 +581,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
               right: 8,
               child: CupertinoButton(
                 padding: EdgeInsets.zero,
-                minSize: 20,
                 child: const Icon(CupertinoIcons.ellipsis, size: 20),
                 onPressed: () => _showWorkoutOptions(workout),
+                minimumSize: Size(20, 20),
               ),
             ),
           ],
@@ -654,36 +653,38 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 8),
-              ...workout.exercises.map((exercise) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('• ', style: TextStyle(fontSize: 16)),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            exercise.name,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+              ...workout.exercises.map(
+                (exercise) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(fontSize: 16)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              exercise.name,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          Text(
-                            exercise.equipment,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: CupertinoColors.systemGrey,
+                            Text(
+                              exercise.equipment,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: CupertinoColors.systemGrey,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),
@@ -710,9 +711,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );

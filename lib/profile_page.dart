@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -101,9 +101,9 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 8),
               Text(
                 email,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               ),
               const SizedBox(height: 32),
               _buildProfileInfo(context),
@@ -143,33 +143,26 @@ class _ProfilePageState extends State<ProfilePage> {
                               ? NetworkImage(photoURL)
                               : null,
                           child: photoURL == null
-                              ? const Icon(Icons.person,
-                              size: 80, color: Colors.white)
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 80,
+                                  color: Colors.white,
+                                )
                               : null,
                         ),
                         const SizedBox(height: 24),
                         Text(
                           displayName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          email,
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
+                        Text(email, style: TextStyle(color: Colors.grey[600])),
                       ],
                     ),
                   ),
                   const SizedBox(width: 48),
-                  Expanded(
-                    flex: 2,
-                    child: _buildProfileInfo(context),
-                  ),
+                  Expanded(flex: 2, child: _buildProfileInfo(context)),
                 ],
               );
             },
@@ -178,6 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
   Widget _buildProfileInfo(BuildContext context) {
     return Card(
       elevation: 2,
@@ -189,29 +183,36 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(
               'Informasi Akun',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             _buildInfoRow(
-                Icons.person_outline,
-                'Nama Lengkap',
-                authService.value.currentUser!.displayName ??
-                    'Nope Still Blank'),
+              Icons.person_outline,
+              'Nama Lengkap',
+              authService.value.currentUser!.displayName ?? 'Nope Still Blank',
+            ),
             const Divider(height: 32),
-            _buildInfoRow(Icons.email_outlined, 'Email',
-                authService.value.currentUser!.email ?? 'i guess its blank'),
+            _buildInfoRow(
+              Icons.email_outlined,
+              'Email',
+              authService.value.currentUser!.email ?? 'i guess its blank',
+            ),
             const Divider(height: 32),
             _buildInfoRow(Icons.phone_outlined, 'Telepon', '+62 812-3456-7890'),
             const Divider(height: 32),
             _buildInfoRow(
-                Icons.location_on_outlined, 'Alamat', 'Jakarta, Indonesia'),
+              Icons.location_on_outlined,
+              'Alamat',
+              'Jakarta, Indonesia',
+            ),
             const Divider(height: 32),
             _buildInfoRow(
-                Icons.calendar_today_outlined,
-                'Bergabung',
-                '${authService.value.currentUser!.metadata.creationTime!.day}/${authService.value.currentUser!.metadata.creationTime!.month}/${authService.value.currentUser!.metadata.creationTime!.year}'),
+              Icons.calendar_today_outlined,
+              'Bergabung',
+              '${authService.value.currentUser!.metadata.creationTime!.day}/${authService.value.currentUser!.metadata.creationTime!.month}/${authService.value.currentUser!.metadata.creationTime!.year}',
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -220,7 +221,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   showEditProfileModal(
                     context,
                     currentUsername:
-                    authService.value.currentUser!.displayName ?? '',
+                        authService.value.currentUser!.displayName ?? '',
                     onUpdate: _updateUsername,
                   );
                 },
@@ -251,10 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
               const SizedBox(height: 4),
               Text(

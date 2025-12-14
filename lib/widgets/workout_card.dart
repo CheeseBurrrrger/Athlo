@@ -12,7 +12,7 @@ class WorkoutCard extends StatelessWidget {
   final String badge;
 
   const WorkoutCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.duration,
     required this.level,
@@ -21,7 +21,7 @@ class WorkoutCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.badge,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -96,23 +96,37 @@ class WorkoutCard extends StatelessWidget {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                            Icon(
+                              Icons.access_time,
+                              size: 14,
+                              color: Colors.grey.shade600,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               duration,
-                              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.fitness_center, size: 14, color: Colors.grey.shade600),
+                            Icon(
+                              Icons.fitness_center,
+                              size: 14,
+                              color: Colors.grey.shade600,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 exercises,
-                                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey.shade600,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -120,7 +134,10 @@ class WorkoutCard extends StatelessWidget {
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: color.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -145,7 +162,10 @@ class WorkoutCard extends StatelessWidget {
                 top: 8,
                 right: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),

@@ -1,6 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'exercise.dart';
-
 class WorkoutSession {
   final String id;
   final String workoutId;

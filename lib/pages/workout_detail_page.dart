@@ -10,7 +10,7 @@ class WorkoutDetailPage extends StatelessWidget {
   final Color color;
 
   const WorkoutDetailPage({
-    Key? key,
+    super.key,
     required this.title,
     required this.duration,
     required this.level,
@@ -18,7 +18,7 @@ class WorkoutDetailPage extends StatelessWidget {
     required this.exercises,
     required this.icon,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -161,15 +161,12 @@ class WorkoutDetailPage extends StatelessWidget {
       children: [
         const Text(
           'Workout Overview',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Text(
           'Program latihan ini dirancang untuk memaksimalkan hasil dengan fokus pada $target. '
-              'Cocok untuk level $level yang ingin meningkatkan kekuatan dan massa otot.',
+          'Cocok untuk level $level yang ingin meningkatkan kekuatan dan massa otot.',
           style: const TextStyle(
             fontSize: 14,
             color: CupertinoColors.systemGrey,
@@ -189,10 +186,7 @@ class WorkoutDetailPage extends StatelessWidget {
       children: [
         const Text(
           'Exercise List',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         ..._getExerciseList().map((exercise) {
@@ -321,10 +315,7 @@ class _InfoCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ],
@@ -366,11 +357,7 @@ class _ExerciseCard extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              CupertinoIcons.sportscourt,
-              color: color,
-              size: 20,
-            ),
+            child: Icon(CupertinoIcons.sportscourt, color: color, size: 20),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -395,11 +382,7 @@ class _ExerciseCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
-            CupertinoIcons.play_circle,
-            color: color,
-            size: 28,
-          ),
+          Icon(CupertinoIcons.play_circle, color: color, size: 28),
         ],
       ),
     );

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'main.dart'; // Import ResponsiveLayout
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -30,29 +30,34 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _register() async {
-    if(_formKey.currentState!.validate()){
-      try{
-        await authService.value.createAccount(email: _emailController.text, password: _passwordController.text);
+    if (_formKey.currentState!.validate()) {
+      try {
+        await authService.value.createAccount(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
         if (!mounted) return;
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Berhasil'),
-              content: const Text('Registrasi berhasil! Silakan login.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-      }on FirebaseAuthException catch (e){
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Berhasil'),
+            content: const Text('Registrasi berhasil! Silakan login.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } on FirebaseAuthException catch (e) {
         setState(() {
-          errorMessage = e.message ?? 'There is an error but i dont really know where it came from';
+          errorMessage =
+              e.message ??
+              'There is an error but i dont really know where it came from';
         });
       }
     }
@@ -88,17 +93,17 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(height: 24),
             Text(
               'Buat Akun',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               'Daftar untuk memulai',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
@@ -158,9 +163,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     Text(
                       'Register',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -286,10 +290,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: const Text('Daftar', style: TextStyle(fontSize: 16)),
           ),
           const SizedBox(height: 16),
-          Text(
-            errorMessage,
-            style: TextStyle(color: Colors.redAccent),
-          ),
+          Text(errorMessage, style: TextStyle(color: Colors.redAccent)),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

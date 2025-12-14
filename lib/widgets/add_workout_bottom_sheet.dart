@@ -10,14 +10,14 @@ import '../models/exercise.dart';
 import '../models/custom_workout.dart';
 
 class AddWorkoutBottomSheet extends StatefulWidget {
-  const AddWorkoutBottomSheet({Key? key}) : super(key: key);
+  const AddWorkoutBottomSheet({super.key});
 
   @override
   State<AddWorkoutBottomSheet> createState() => _AddWorkoutBottomSheetState();
 }
 
 class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
-  WorkoutService workoutService = new WorkoutService();
+  WorkoutService workoutService = WorkoutService();
   final ExerciseDBService _exerciseDBService = ExerciseDBService();
   final WorkoutStorageService _storageService = WorkoutStorageService();
 
@@ -68,7 +68,9 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
     });
 
     try {
-      final exercises = await _exerciseDBService.getExercisesByMuscle(muscleName);
+      final exercises = await _exerciseDBService.getExercisesByMuscle(
+        muscleName,
+      );
       setState(() {
         availableExercises = exercises.cast<Exercise>();
         _isLoadingExercises = false;
@@ -342,13 +344,16 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              if (selectedExercises.length < availableExercises.length)
+                              if (selectedExercises.length <
+                                  availableExercises.length)
                                 CupertinoButton(
                                   padding: EdgeInsets.zero,
                                   child: const Text('Select All'),
                                   onPressed: () {
                                     setState(() {
-                                      selectedExercises = Set.from(availableExercises);
+                                      selectedExercises = Set.from(
+                                        availableExercises,
+                                      );
                                     });
                                   },
                                 ),
@@ -502,10 +507,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
         ),
         child: Row(
           children: [
-            const Icon(
-              CupertinoIcons.scope,
-              color: CupertinoColors.systemGrey,
-            ),
+            const Icon(CupertinoIcons.scope, color: CupertinoColors.systemGrey),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -549,7 +551,10 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                   ),
                   const Text(
                     'Select Muscle',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
                   ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
@@ -573,9 +578,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                   });
                 },
                 children: _muscles!.map((muscle) {
-                  return Center(
-                    child: Text(muscle.name.toUpperCase()),
-                  );
+                  return Center(child: Text(muscle.name.toUpperCase()));
                 }).toList(),
               ),
             ),
@@ -643,7 +646,10 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
