@@ -10,10 +10,7 @@ import '../services/workout_storage_service.dart';
 class EditWorkoutBottomSheet extends StatefulWidget {
   final CustomWorkout workout;
 
-  const EditWorkoutBottomSheet({
-    Key? key,
-    required this.workout,
-  }) : super(key: key);
+  const EditWorkoutBottomSheet({super.key, required this.workout});
 
   @override
   State<EditWorkoutBottomSheet> createState() => _EditWorkoutBottomSheetState();
@@ -21,7 +18,7 @@ class EditWorkoutBottomSheet extends StatefulWidget {
 
 class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
   final ExerciseDBService _apiService = ExerciseDBService();
-  WorkoutService workoutService = new WorkoutService();
+  WorkoutService workoutService = WorkoutService();
 
   late TextEditingController _titleController;
   late TextEditingController _durationController;
@@ -52,17 +49,15 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
   void initState() {
     super.initState();
 
-    // Initialize with workout data
     _titleController = TextEditingController(text: widget.workout.title);
     _durationController = TextEditingController(text: widget.workout.duration);
     _selectedLevel = widget.workout.level;
     _selectedMuscle = widget.workout.targetMuscle;
     _selectedExercises = List.from(widget.workout.exercises);
 
-    // Find the color index
     final Color workoutColor = _getColorFromHex(widget.workout.color);
     _selectedColorIndex = availableColors.indexWhere(
-          (color) => color.value == workoutColor.value,
+      (color) => color.value == workoutColor.value,
     );
     if (_selectedColorIndex == -1) _selectedColorIndex = 0;
 
@@ -86,7 +81,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
         isLoadingMuscles = false;
       });
 
-      // Load exercises for the current muscle
       await _loadExercises(_selectedMuscle);
     } catch (e) {
       setState(() => isLoadingMuscles = false);
@@ -153,7 +147,8 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
         level: _selectedLevel,
         targetMuscle: _selectedMuscle,
         exercises: _selectedExercises,
-        color: '0x${availableColors[_selectedColorIndex].value.toRadixString(16)}',
+        color:
+            '0x${availableColors[_selectedColorIndex].value.toRadixString(16)}',
         createdAt: widget.workout.createdAt,
       );
 
@@ -186,7 +181,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
       ),
       child: Column(
         children: [
-          // Handle bar
           Container(
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             width: 40,
@@ -197,7 +191,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
             ),
           ),
 
-          // Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Row(
@@ -216,19 +209,14 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
             ),
           ),
 
-          Container(
-            height: 0.5,
-            color: CupertinoColors.systemGrey4,
-          ),
+          Container(height: 0.5, color: CupertinoColors.systemGrey4),
 
-          // Form content
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Workout Name
                   const Text(
                     'Workout Name',
                     style: TextStyle(
@@ -257,7 +245,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Duration
                   const Text(
                     'Duration',
                     style: TextStyle(
@@ -286,7 +273,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Level
                   const Text(
                     'Fitness Level',
                     style: TextStyle(
@@ -328,7 +314,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Target Muscle
                   const Text(
                     'Target Muscle',
                     style: TextStyle(
@@ -340,48 +325,47 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                   const SizedBox(height: 8),
                   isLoadingMuscles
                       ? Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.systemGrey6,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(
-                      child: CupertinoActivityIndicator(),
-                    ),
-                  )
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.systemGrey6,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Center(
+                            child: CupertinoActivityIndicator(),
+                          ),
+                        )
                       : GestureDetector(
-                    onTap: () => _showMusclePicker(),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: CupertinoColors.systemGrey6,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            CupertinoIcons.scope,
-                            color: CupertinoColors.systemGrey,
+                          onTap: () => _showMusclePicker(),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: CupertinoColors.systemGrey6,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  CupertinoIcons.scope,
+                                  color: CupertinoColors.systemGrey,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  _selectedMuscle,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                const Spacer(),
+                                const Icon(
+                                  CupertinoIcons.chevron_down,
+                                  color: CupertinoColors.systemGrey,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            _selectedMuscle,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const Spacer(),
-                          const Icon(
-                            CupertinoIcons.chevron_down,
-                            color: CupertinoColors.systemGrey,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
 
                   const SizedBox(height: 20),
 
-                  // Color Selection
                   const Text(
                     'Workout Color',
                     style: TextStyle(
@@ -419,9 +403,9 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                           ),
                           child: isSelected
                               ? const Icon(
-                            CupertinoIcons.check_mark,
-                            color: CupertinoColors.white,
-                          )
+                                  CupertinoIcons.check_mark,
+                                  color: CupertinoColors.white,
+                                )
                               : null,
                         ),
                       );
@@ -430,7 +414,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 24),
 
-                  // Exercises Section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -465,7 +448,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 12),
 
-                  // Selected Exercises
                   if (_selectedExercises.isNotEmpty)
                     ..._selectedExercises.map((exercise) {
                       return Container(
@@ -511,7 +493,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                             ),
                             CupertinoButton(
                               padding: EdgeInsets.zero,
-                              minSize: 30,
                               child: const Icon(
                                 CupertinoIcons.minus_circle,
                                 color: CupertinoColors.systemRed,
@@ -521,6 +502,7 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                                   _selectedExercises.remove(exercise);
                                 });
                               },
+                              minimumSize: Size(30, 30),
                             ),
                           ],
                         ),
@@ -529,7 +511,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 16),
 
-                  // Add Exercise Button
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () => _showExercisePicker(),
@@ -570,16 +551,12 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
             ),
           ),
 
-          // Bottom action button
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: CupertinoColors.white,
               border: Border(
-                top: BorderSide(
-                  color: CupertinoColors.systemGrey4,
-                  width: 0.5,
-                ),
+                top: BorderSide(color: CupertinoColors.systemGrey4, width: 0.5),
               ),
             ),
             child: CupertinoButton(
@@ -644,7 +621,9 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                     _selectedLevel = levels[index];
                   });
                 },
-                children: levels.map((level) => Center(child: Text(level))).toList(),
+                children: levels
+                    .map((level) => Center(child: Text(level)))
+                    .toList(),
               ),
             ),
           ],
@@ -686,7 +665,7 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                 itemExtent: 40,
                 scrollController: FixedExtentScrollController(
                   initialItem: muscles.indexWhere(
-                        (m) => m.name == _selectedMuscle,
+                    (m) => m.name == _selectedMuscle,
                   ),
                 ),
                 onSelectedItemChanged: (index) {
@@ -742,121 +721,127 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
                 ],
               ),
             ),
-            Container(
-              height: 0.5,
-              color: CupertinoColors.systemGrey4,
-            ),
+            Container(height: 0.5, color: CupertinoColors.systemGrey4),
             Expanded(
               child: isLoadingExercises
                   ? const Center(child: CupertinoActivityIndicator())
                   : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: availableExercises.length,
-                itemBuilder: (context, index) {
-                  final exercise = availableExercises[index];
-                  final isSelected = _selectedExercises
-                      .any((e) => e.name == exercise.name);
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selectedExercises.removeWhere(
-                                    (e) => e.name == exercise.name);
-                            _showFeedbackToast('${exercise.name} removed', isSuccess: false);
-                          } else {
-                            _selectedExercises.add(exercise);
-                            _showFeedbackToast('${exercise.name} added', isSuccess: true);
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? availableColors[_selectedColorIndex]
-                              .withOpacity(0.15)
-                              : CupertinoColors.systemGrey6,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected
-                                ? availableColors[_selectedColorIndex]
-                                : CupertinoColors.systemGrey5,
-                            width: isSelected ? 2 : 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: availableExercises.length,
+                      itemBuilder: (context, index) {
+                        final exercise = availableExercises[index];
+                        final isSelected = _selectedExercises.any(
+                          (e) => e.name == exercise.name,
+                        );
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  _selectedExercises.removeWhere(
+                                    (e) => e.name == exercise.name,
+                                  );
+                                  _showFeedbackToast(
+                                    '${exercise.name} removed',
+                                    isSuccess: false,
+                                  );
+                                } else {
+                                  _selectedExercises.add(exercise);
+                                  _showFeedbackToast(
+                                    '${exercise.name} added',
+                                    isSuccess: true,
+                                  );
+                                }
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? availableColors[_selectedColorIndex]
-                                    : CupertinoColors.systemGrey4,
-                                shape: BoxShape.circle,
+                                          .withOpacity(0.15)
+                                    : CupertinoColors.systemGrey6,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? availableColors[_selectedColorIndex]
+                                      : CupertinoColors.systemGrey5,
+                                  width: isSelected ? 2 : 1,
+                                ),
                               ),
-                              child: Icon(
-                                isSelected
-                                    ? CupertinoIcons.check_mark
-                                    : CupertinoIcons.sportscourt,
-                                color: CupertinoColors.white,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    exercise.name,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
                                       color: isSelected
-                                          ? CupertinoColors.black
-                                          : CupertinoColors.black,
+                                          ? availableColors[_selectedColorIndex]
+                                          : CupertinoColors.systemGrey4,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      isSelected
+                                          ? CupertinoIcons.check_mark
+                                          : CupertinoIcons.sportscourt,
+                                      color: CupertinoColors.white,
+                                      size: 20,
                                     ),
                                   ),
-                                  Text(
-                                    exercise.equipment,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: CupertinoColors.systemGrey,
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          exercise.name,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            color: isSelected
+                                                ? CupertinoColors.black
+                                                : CupertinoColors.black,
+                                          ),
+                                        ),
+                                        Text(
+                                          exercise.equipment,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: CupertinoColors.systemGrey,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
+                                  if (isSelected)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            availableColors[_selectedColorIndex],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        'Added',
+                                        style: TextStyle(
+                                          color: CupertinoColors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
-                            if (isSelected)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: availableColors[_selectedColorIndex],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Text(
-                                  'Added',
-                                  style: TextStyle(
-                                    color: CupertinoColors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -865,7 +850,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
   }
 
   void _showFeedbackToast(String message, {required bool isSuccess}) {
-    // Remove any existing overlays
     if (mounted) {
       final overlay = Overlay.of(context);
       final overlayEntry = OverlayEntry(
@@ -919,7 +903,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
       overlay.insert(overlayEntry);
 
-      // Auto-remove after 1.5 seconds
       Future.delayed(const Duration(milliseconds: 1500), () {
         overlayEntry.remove();
       });

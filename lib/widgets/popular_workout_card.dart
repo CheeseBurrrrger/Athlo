@@ -9,14 +9,14 @@ class PopularWorkoutCard extends StatelessWidget {
   final Color color;
 
   const PopularWorkoutCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.duration,
     required this.calories,
     required this.level,
     required this.icon,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,18 +57,41 @@ class PopularWorkoutCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 4),
-                    Text(duration, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                    Text(
+                      duration,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
                     const SizedBox(width: 12),
-                    Icon(Icons.local_fire_department, size: 14, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.local_fire_department,
+                      size: 14,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 4),
-                    Text(calories, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                    Text(
+                      calories,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -82,7 +105,11 @@ class PopularWorkoutCard extends StatelessWidget {
             ),
             child: Text(
               level,
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ),
         ],

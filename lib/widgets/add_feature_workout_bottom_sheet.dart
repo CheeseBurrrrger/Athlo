@@ -1,25 +1,21 @@
-import 'package:athlo/models/custom_workout.dart' hide CustomWorkout;
-import 'package:athlo/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Material, Colors;
-import '../services/workout_storage_service.dart';
 import '../services/exercise_db_service.dart';
-import '../services/custom_workout_service.dart';
+import '../services/featured_workout_service.dart';
 import '../models/muscle.dart';
 import '../models/exercise.dart';
 import '../models/custom_workout.dart';
 
-class AddWorkoutBottomSheet extends StatefulWidget {
-  const AddWorkoutBottomSheet({super.key});
+class AddFeaturedWorkoutBottomSheet extends StatefulWidget {
+  const AddFeaturedWorkoutBottomSheet({Key? key}) : super(key: key);
 
   @override
-  State<AddWorkoutBottomSheet> createState() => _AddWorkoutBottomSheetState();
+  State<AddFeaturedWorkoutBottomSheet> createState() => _AddFeaturedWorkoutBottomSheetState();
 }
 
-class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
-  WorkoutService workoutService = WorkoutService();
+class _AddFeaturedWorkoutBottomSheetState extends State<AddFeaturedWorkoutBottomSheet> {
+  final FeaturedWorkoutService _featuredWorkoutService = FeaturedWorkoutService();
   final ExerciseDBService _exerciseDBService = ExerciseDBService();
-  final WorkoutStorageService _storageService = WorkoutStorageService();
 
   String? selectedMuscle;
   String? selectedLevel;
@@ -68,9 +64,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
     });
 
     try {
-      final exercises = await _exerciseDBService.getExercisesByMuscle(
-        muscleName,
-      );
+      final exercises = await _exerciseDBService.getExercisesByMuscle(muscleName);
       setState(() {
         availableExercises = exercises.cast<Exercise>();
         _isLoadingExercises = false;
@@ -110,7 +104,10 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context, true); // Close sheet and return true
+            },
             child: const Text('OK'),
           ),
         ],
@@ -146,7 +143,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
 
     var workout = CustomWorkout(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      uId: authService.value.currentUser!.uid.toString(),
+      uId: 'featured',
       title: nameController.text,
       duration: '${durationController.text} min',
       level: selectedLevel!,
@@ -157,10 +154,9 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
     );
 
     try {
-      workoutService.add(workout);
+      await _featuredWorkoutService.add(workout);
       if (mounted) {
-        Navigator.pop(context, true);
-        _showSuccessDialog('Workout created successfully! 💪');
+        _showSuccessDialog('Featured workout created successfully! 🎉');
       }
     } catch (e) {
       if (mounted) {
@@ -216,7 +212,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
               backgroundColor: CupertinoColors.systemBackground,
               border: null,
               middle: const Text(
-                'Add Custom Workout',
+                'Add Featured Workout',
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
               trailing: CupertinoButton(
@@ -234,6 +230,38 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemYellow.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: CupertinoColors.systemYellow,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              CupertinoIcons.star_fill,
+                              color: CupertinoColors.systemYellow,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'This workout will be visible to all users',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: CupertinoColors.label,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
                       const Text(
                         'Workout Name',
                         style: TextStyle(
@@ -338,16 +366,13 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              if (selectedExercises.length <
-                                  availableExercises.length)
+                              if (selectedExercises.length < availableExercises.length)
                                 CupertinoButton(
                                   padding: EdgeInsets.zero,
                                   child: const Text('Select All'),
                                   onPressed: () {
                                     setState(() {
-                                      selectedExercises = Set.from(
-                                        availableExercises,
-                                      );
+                                      selectedExercises = Set.from(availableExercises);
                                     });
                                   },
                                 ),
@@ -374,6 +399,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
               ),
             ),
 
+            // Bottom button
             Container(
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
@@ -393,7 +419,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                     onPressed: _saveWorkout,
                     borderRadius: BorderRadius.circular(12),
                     child: const Text(
-                      'Create Workout',
+                      'Create Featured Workout',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -500,7 +526,10 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
         ),
         child: Row(
           children: [
-            const Icon(CupertinoIcons.scope, color: CupertinoColors.systemGrey),
+            const Icon(
+              CupertinoIcons.scope,
+              color: CupertinoColors.systemGrey,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -544,10 +573,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                   ),
                   const Text(
                     'Select Muscle',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
@@ -571,7 +597,9 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                   });
                 },
                 children: _muscles!.map((muscle) {
-                  return Center(child: Text(muscle.name.toUpperCase()));
+                  return Center(
+                    child: Text(muscle.name.toUpperCase()),
+                  );
                 }).toList(),
               ),
             ),
@@ -639,10 +667,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(

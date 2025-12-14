@@ -7,12 +7,12 @@ class LevelChip extends StatelessWidget {
   final Function(bool) onSelected;
 
   const LevelChip({
-    Key? key,
+    super.key,
     required this.label,
     required this.color,
     required this.isSelected,
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

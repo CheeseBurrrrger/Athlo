@@ -3,14 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ActivityFeedPage extends StatefulWidget {
-  const ActivityFeedPage({Key? key}) : super(key: key);
+  const ActivityFeedPage({super.key});
 
   @override
   State<ActivityFeedPage> createState() => _ActivityFeedPageState();
 }
 
 class _ActivityFeedPageState extends State<ActivityFeedPage> {
-
   // 🔧 Helper: format timestamp menjadi "Just now / 2 hours ago"
   String _formatTimestamp(Timestamp? ts) {
     if (ts == null) return "Just now";
@@ -74,9 +73,7 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-              child: Text("No activities yet"),
-            );
+            return const Center(child: Text("No activities yet"));
           }
 
           final docs = snapshot.data!.docs;
@@ -168,7 +165,7 @@ class Activity {
 class ActivityCard extends StatelessWidget {
   final Activity activity;
 
-  const ActivityCard({Key? key, required this.activity}) : super(key: key);
+  const ActivityCard({super.key, required this.activity});
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +198,10 @@ class ActivityCard extends StatelessWidget {
           backgroundColor: activity.color,
           child: Text(
             activity.userAvatar,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         const SizedBox(width: 12),
@@ -209,10 +209,17 @@ class ActivityCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(activity.userName,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text(activity.timestamp,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              Text(
+                activity.userName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                activity.timestamp,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
             ],
           ),
         ),
