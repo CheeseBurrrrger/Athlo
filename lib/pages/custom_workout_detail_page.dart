@@ -189,7 +189,6 @@ class CustomWorkoutDetailPage extends StatelessWidget {
           width: double.infinity,
           child: CupertinoButton.filled(
             onPressed: () {
-              // Show confirmation dialog
               showCupertinoDialog(
                 context: context,
                 builder: (context) => CupertinoAlertDialog(

@@ -59,7 +59,6 @@ class _EditProfileModalState extends State<EditProfileModal> {
       authService.value.updateUsername(username: newUsername);
       if (mounted) {
         Navigator.pop(context);
-        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Username berhasil diperbarui!'),
@@ -127,7 +126,6 @@ class _EditProfileModalState extends State<EditProfileModal> {
   }
 }
 
-// Helper function to show the modal
 void showEditProfileModal(
     BuildContext context, {
       required String currentUsername,

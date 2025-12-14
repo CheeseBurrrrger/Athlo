@@ -52,14 +52,12 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
   void initState() {
     super.initState();
 
-    // Initialize with workout data
     _titleController = TextEditingController(text: widget.workout.title);
     _durationController = TextEditingController(text: widget.workout.duration);
     _selectedLevel = widget.workout.level;
     _selectedMuscle = widget.workout.targetMuscle;
     _selectedExercises = List.from(widget.workout.exercises);
 
-    // Find the color index
     final Color workoutColor = _getColorFromHex(widget.workout.color);
     _selectedColorIndex = availableColors.indexWhere(
           (color) => color.value == workoutColor.value,
@@ -86,7 +84,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
         isLoadingMuscles = false;
       });
 
-      // Load exercises for the current muscle
       await _loadExercises(_selectedMuscle);
     } catch (e) {
       setState(() => isLoadingMuscles = false);
@@ -186,7 +183,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
       ),
       child: Column(
         children: [
-          // Handle bar
           Container(
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             width: 40,
@@ -197,7 +193,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
             ),
           ),
 
-          // Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Row(
@@ -221,14 +216,12 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
             color: CupertinoColors.systemGrey4,
           ),
 
-          // Form content
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Workout Name
                   const Text(
                     'Workout Name',
                     style: TextStyle(
@@ -257,7 +250,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Duration
                   const Text(
                     'Duration',
                     style: TextStyle(
@@ -286,7 +278,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Level
                   const Text(
                     'Fitness Level',
                     style: TextStyle(
@@ -328,7 +319,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Target Muscle
                   const Text(
                     'Target Muscle',
                     style: TextStyle(
@@ -381,7 +371,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 20),
 
-                  // Color Selection
                   const Text(
                     'Workout Color',
                     style: TextStyle(
@@ -430,7 +419,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 24),
 
-                  // Exercises Section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -465,7 +453,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 12),
 
-                  // Selected Exercises
                   if (_selectedExercises.isNotEmpty)
                     ..._selectedExercises.map((exercise) {
                       return Container(
@@ -529,7 +516,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
                   const SizedBox(height: 16),
 
-                  // Add Exercise Button
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () => _showExercisePicker(),
@@ -570,7 +556,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
             ),
           ),
 
-          // Bottom action button
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -865,7 +850,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
   }
 
   void _showFeedbackToast(String message, {required bool isSuccess}) {
-    // Remove any existing overlays
     if (mounted) {
       final overlay = Overlay.of(context);
       final overlayEntry = OverlayEntry(
@@ -919,7 +903,6 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
       overlay.insert(overlayEntry);
 
-      // Auto-remove after 1.5 seconds
       Future.delayed(const Duration(milliseconds: 1500), () {
         overlayEntry.remove();
       });

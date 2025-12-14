@@ -22,9 +22,7 @@ class ExerciseDBService {
       if (response.statusCode == 200) {
         final dynamic jsonData = json.decode(response.body);
 
-        // Check if response is a Map (object) or List
         if (jsonData is Map<String, dynamic>) {
-          // API returns an object, check for common data keys
           if (jsonData.containsKey('data')) {
             List<dynamic> data = jsonData['data'] as List;
             return data.map((json) => Muscle.fromJson(json)).toList();
@@ -35,11 +33,9 @@ class ExerciseDBService {
             List<dynamic> data = jsonData['results'] as List;
             return data.map((json) => Muscle.fromJson(json)).toList();
           } else {
-            // The entire object might be a single muscle, wrap it in a list
             throw Exception('Unexpected API response format: ${jsonData.keys}');
           }
         } else if (jsonData is List) {
-          // API returns a list directly
           return jsonData.map((json) => Muscle.fromJson(json as Map<String, dynamic>)).toList();
         } else {
           throw Exception('Unexpected response type: ${jsonData.runtimeType}');
@@ -49,7 +45,7 @@ class ExerciseDBService {
       }
     } catch (e) {
       print('Error in getMuscles: $e'); // Debug
-      rethrow; // Rethrow to see the full error
+      rethrow;
     }
   }
   Future<List<Exercise>> getExercisesByMuscle(String muscleName) async {
@@ -70,7 +66,6 @@ class ExerciseDBService {
 
         print('Response keys: ${jsonData.keys}');
 
-        // Check for success field
         if (jsonData['success'] == true && jsonData.containsKey('data')) {
           List<dynamic> data = jsonData['data'] as List;
           print('Found ${data.length} exercises');

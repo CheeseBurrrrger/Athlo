@@ -1,14 +1,19 @@
 import 'package:athlo/services/auth_service.dart';
 import 'package:athlo/services/custom_workout_service.dart';
+import 'package:athlo/services/workout_session_service.dart';
+import 'package:athlo/services/featured_workout_service.dart';
+import 'package:athlo/widgets/add_feature_workout_bottom_sheet.dart' hide AddFeaturedWorkoutBottomSheet;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../pages/custom_workout_detail_page.dart';
+import '../pages/workout_detail_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Material, Colors;
 import '../widgets/workout_card.dart';
 import '../widgets/popular_workout_card.dart';
 import '../widgets/quick_stat_card.dart';
 import '../widgets/add_workout_bottom_sheet.dart';
+import '../widgets/add_feature_workout_bottom_sheet.dart';
 import '../widgets/edit_workout_bottom_sheet.dart';
 import '../services/workout_storage_service.dart';
 import '../models/custom_workout.dart';
@@ -22,15 +27,37 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   final WorkoutStorageService _storageService = WorkoutStorageService();
-  WorkoutService workoutService = new WorkoutService();
+  WorkoutService workoutService = WorkoutService();
+  WorkoutSessionService workoutSessionService = WorkoutSessionService();
+  FeaturedWorkoutService featuredWorkoutService = FeaturedWorkoutService();
 
   List<CustomWorkout> customWorkouts = [];
   bool isLoading = true;
+  Map<String, dynamic> workoutStats = {
+    'totalWorkouts': 0,
+    'totalMinutes': 0,
+    'averageDuration': 0,
+    'todayMinutes': 0,
+    'currentStreak': 0,
+  };
 
   @override
   void initState() {
     super.initState();
     _loadCustomWorkouts();
+    _loadWorkoutStats();
+  }
+
+  Future<void> _loadWorkoutStats() async {
+    try {
+      final uId = authService.value.currentUser!.uid;
+      final stats = await workoutSessionService.getWorkoutStats(uId);
+      setState(() {
+        workoutStats = stats;
+      });
+    } catch (e) {
+      print('Error loading workout stats: $e');
+    }
   }
 
   Future<void> _loadCustomWorkouts() async {
@@ -67,7 +94,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Future<void> _deleteWorkout(CustomWorkout workout) async {
-    print('Attempting to delete workout with ID: ${workout.id}'); // Debug print
+    print('Attempting to delete workout with ID: ${workout.id}');
 
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
@@ -142,37 +169,36 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  // Helper methods for responsive grid
   int _getGridCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     if (width > 1200) {
-      return 6; // 6 columns for very large screens
+      return 6;
     } else if (width > 900) {
-      return 4; // 4 columns for large screens
+      return 4;
     } else if (width > 600) {
-      return 3; // 3 columns for tablets
+      return 3;
     } else {
-      return 2; // 2 columns for mobile
+      return 2;
     }
   }
 
   double _getGridChildAspectRatio(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     if (width > 1200) {
-      return 0.75; // More rectangular cards on very large screens
+      return 0.75;
     } else if (width > 900) {
-      return 0.7; // Slightly taller cards on large screens
+      return 0.7;
     } else if (width > 600) {
-      return 0.65; // Balanced cards on tablets
+      return 0.65;
     } else {
-      return 0.6; // Taller cards on mobile
+      return 0.6;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final uId = authService.value.currentUser!.uid;
-    print("userId : "+uId);
+    print("userId : " + uId);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text(
@@ -181,6 +207,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
         backgroundColor: CupertinoColors.white,
         border: null,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.star, color: CupertinoColors.systemYellow),
+          onPressed: () async {
+            final result = await showCupertinoModalPopup(
+              context: context,
+              builder: (context) => const AddFeaturedWorkoutBottomSheet(),
+            );
+
+            if (result == true) {
+              // Optionally show success message
+            }
+          },
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.add),
@@ -235,7 +275,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            // Quick Stats
+            // Stats Cards
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -243,7 +283,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   children: [
                     Expanded(
                       child: QuickStatCard(
-                        value: '12',
+                        value: workoutStats['totalWorkouts'].toString(),
                         label: 'Workouts\nCompleted',
                         color: const Color(0xFF6E8CFB),
                         icon: CupertinoIcons.check_mark_circled_solid,
@@ -252,7 +292,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: QuickStatCard(
-                        value: '45',
+                        value: workoutStats['todayMinutes'].toString(),
                         label: 'Minutes\nToday',
                         color: const Color(0xFF636CCB),
                         icon: CupertinoIcons.timer,
@@ -261,7 +301,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: QuickStatCard(
-                        value: '5',
+                        value: workoutStats['currentStreak'].toString(),
                         label: 'Day\nStreak',
                         color: const Color(0xFF50589C),
                         icon: CupertinoIcons.flame_fill,
@@ -272,6 +312,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
+            // Custom Workouts Section
             StreamBuilder<List>(
               stream: workoutService.readSpecificUser(uId),
               builder: (context, snapshot) {
@@ -357,32 +398,85 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: _getGridCrossAxisCount(context),
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: _getGridChildAspectRatio(context),
-                ),
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final program = workoutPrograms[index];
-                    return WorkoutCard(
-                      title: program['title']!,
-                      duration: program['duration']!,
-                      level: program['level']!,
-                      target: program['target']!,
-                      exercises: program['exercises']!,
-                      icon: program['icon'] as IconData,
-                      color: program['color'] as Color,
-                      badge: program['badge']!,
-                    );
-                  },
-                  childCount: workoutPrograms.length,
-                ),
-              ),
+            // Featured Workouts from Firebase
+            StreamBuilder<List<CustomWorkout>>(
+              stream: featuredWorkoutService.readAll(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.0),
+                        child: CupertinoActivityIndicator(),
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: CupertinoColors.systemRed),
+                      ),
+                    ),
+                  );
+                }
+                final featuredWorkouts = snapshot.data ?? [];
+                if (featuredWorkouts.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Icon(
+                              CupertinoIcons.star,
+                              size: 48,
+                              color: CupertinoColors.systemGrey3,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No featured workouts yet',
+                              style: TextStyle(
+                                color: CupertinoColors.systemGrey,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Tap the star icon to add one',
+                              style: TextStyle(
+                                color: CupertinoColors.systemGrey2,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: _getGridCrossAxisCount(context),
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: _getGridChildAspectRatio(context),
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        final workout = featuredWorkouts[index];
+                        return _buildFeaturedWorkoutCard(workout);
+                      },
+                      childCount: featuredWorkouts.length,
+                    ),
+                  ),
+                );
+              },
             ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -593,6 +687,169 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
+  Widget _buildFeaturedWorkoutCard(CustomWorkout workout) {
+    final color = _getColorFromHex(workout.color);
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => CustomWorkoutDetailPage(workout: workout),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: CupertinoColors.systemGrey5, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.black.withOpacity(0.08),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 120,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color.withOpacity(0.8), color],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      CupertinoIcons.star_fill,
+                      size: 50,
+                      color: CupertinoColors.white,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          workout.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: CupertinoColors.black,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.time,
+                              size: 14,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              workout.duration,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: CupertinoColors.systemGrey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.sportscourt,
+                              size: 14,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                '${workout.exercises.length} exercises',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: CupertinoColors.systemGrey,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            workout.level,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemYellow,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      CupertinoIcons.star_fill,
+                      size: 10,
+                      color: CupertinoColors.white,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Featured',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: CupertinoColors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showWorkoutOptions(CustomWorkout workout) {
     showCupertinoModalPopup(
       context: context,
@@ -620,7 +877,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
-              _deleteWorkout(workout); // Changed from workout.id to workout
+              _deleteWorkout(workout);
             },
             child: const Text('Delete Workout'),
           ),
