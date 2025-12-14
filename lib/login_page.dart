@@ -259,20 +259,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           const SizedBox(height: 8),
-          OutlinedButton(
-            onPressed: _devQuickLogin,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: Colors.redAccent),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'DEV: Quick Login',
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ),
 
           const SizedBox(height: 16),
           Row(

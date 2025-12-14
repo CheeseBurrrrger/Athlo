@@ -28,10 +28,10 @@ class NutritionFoodService {
   }
 
   // READ - Ambil makanan user (custom foods)
-  Stream<List<NutritionFood>> readUserFoods(String userId) {
+  Stream<List<NutritionFood>> readUserFoods(String userID) {
     return _firestore
         .collection(_collection)
-        .where('userId', isEqualTo: userId)
+        .where('userID', isEqualTo: userID)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(

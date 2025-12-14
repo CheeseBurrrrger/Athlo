@@ -252,9 +252,9 @@ class _NutritionFoodListPageState extends State<NutritionFoodListPage> {
     );
   }
 
-  Widget _buildUserFoodsTab(String userId) {
+  Widget _buildUserFoodsTab(String userID) {
     return StreamBuilder<List<NutritionFood>>(
-      stream: _foodService.readUserFoods(userId),
+      stream: _foodService.readUserFoods(userID),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -372,7 +372,7 @@ class _NutritionFoodListPageState extends State<NutritionFoodListPage> {
 
     try {
       final plan = NutritionPlan(
-        userId: user.uid,
+        userID: user.uid,
         type: widget.programType,
         selectedFoodIds: _selectedFoodIds.toList(),
         targetCalories: widget.targetCalories,

@@ -1,3 +1,4 @@
+// nutrition_page.dart
 import 'package:athlo/pages/my_nutrition_plan_page.dart';
 import 'package:athlo/pages/nutrition_food_list_page.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +16,30 @@ class NutritionPage extends StatefulWidget {
 class _NutritionPageState extends State<NutritionPage> {
   final NutritionPlanService _planService = NutritionPlanService();
   User? user;
+  bool _isInitializing = false;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
+    _initializeUserPlan();
+  }
+
+  Future<void> _initializeUserPlan() async {
+    if (user == null) return;
+
+    setState(() => _isInitializing = true);
+
+    try {
+      // Check if user has a plan, if not create default
+      await _planService.initializeDefaultPlan(user!.uid);
+    } catch (e) {
+      print('Error initializing plan: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isInitializing = false);
+      }
+    }
   }
 
   @override
@@ -27,6 +47,20 @@ class _NutritionPageState extends State<NutritionPage> {
     if (user == null) {
       return Scaffold(
         body: Center(child: Text('Silakan login terlebih dahulu')),
+      );
+    }
+
+    if (_isInitializing) {
+      return Scaffold(
+        backgroundColor: Colors.grey.shade50,
+        appBar: AppBar(
+          title: Text(
+            'Nutrition Plan',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          backgroundColor: Color(0xFF3C467B),
+        ),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -90,6 +124,29 @@ class _NutritionPageState extends State<NutritionPage> {
             StreamBuilder(
               stream: _planService.getUserPlan(user!.uid),
               builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    margin: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(24),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return Container(
+                    margin: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
                 if (snapshot.hasData && snapshot.data != null) {
                   final plan = snapshot.data!;
                   return Container(
@@ -168,7 +225,28 @@ class _NutritionPageState extends State<NutritionPage> {
                     ),
                   );
                 }
-                return SizedBox.shrink();
+
+                // No plan yet - show default message
+                return Container(
+                  margin: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Pilih program nutrisi untuk memulai',
+                          style: TextStyle(color: Colors.blue.shade900),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
 
@@ -214,11 +292,11 @@ class _NutritionPageState extends State<NutritionPage> {
   }
 
   Widget _buildStatChip(
-    String value,
-    String label,
-    Color color,
-    IconData icon,
-  ) {
+      String value,
+      String label,
+      Color color,
+      IconData icon,
+      ) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12),
@@ -257,20 +335,20 @@ class _NutritionPageState extends State<NutritionPage> {
   }
 
   void _selectProgram(
-    BuildContext context,
-    Map<String, dynamic> program,
-    String userId,
-  ) async {
+      BuildContext context,
+      Map<String, dynamic> program,
+      String userId,
+      ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Pilih Program ${program['title']}?'),
         content: Text(
           'Apakah Anda ingin menggunakan program ${program['title']}?\n\n'
-          'Target:\n'
-          '• Kalori: ${program['calories']} kcal\n'
-          '• Protein: ${program['protein']}\n'
-          '• Karbo: ${program['carbs']}',
+              'Target:\n'
+              '• Kalori: ${program['calories']} kcal\n'
+              '• Protein: ${program['protein']}\n'
+              '• Karbo: ${program['carbs']}',
         ),
         actions: [
           TextButton(
@@ -287,32 +365,95 @@ class _NutritionPageState extends State<NutritionPage> {
     );
 
     if (confirmed == true) {
-      // Update Firebase via NutritionPlanService
-      await _planService.changePlanType(
-        userId,
-        program['type']!,
-        int.parse(program['calories']!.replaceAll(',', '')),
-        int.parse(program['protein']!.replaceAll('g', '')),
-        int.parse(program['carbs']!.replaceAll('g', '')),
-      );
-
-      // UI otomatis refresh karena StreamBuilder mendeteksi perubahan
-      setState(() {});
-
-      // Navigate ke food list page
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NutritionFoodListPage(
-            programType: program['type']!,
-            programTitle: program['title']!,
-            programColor: program['color']!,
-            targetCalories: int.parse(program['calories']!.replaceAll(',', '')),
-            targetProtein: int.parse(program['protein']!.replaceAll('g', '')),
-            targetCarbs: int.parse(program['carbs']!.replaceAll('g', '')),
+      try {
+        // Show loading indicator
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => Center(
+            child: Container(
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Mengatur program...'),
+                ],
+              ),
+            ),
           ),
-        ),
-      );
+        );
+
+        // Update Firebase via NutritionPlanService
+        await _planService.changePlanType(
+          userId,
+          program['type']!,
+          int.parse(program['calories']!.replaceAll(',', '')),
+          int.parse(program['protein']!.replaceAll('g', '')),
+          int.parse(program['carbs']!.replaceAll('g', '')),
+        );
+
+        // Close loading dialog
+        if (mounted) Navigator.pop(context);
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text('Program ${program['title']} berhasil dipilih!'),
+                ],
+              ),
+              backgroundColor: Color(0xFF4CAF50),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+
+        // UI otomatis refresh karena StreamBuilder mendeteksi perubahan
+        setState(() {});
+
+        // Navigate ke food list page
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NutritionFoodListPage(
+                programType: program['type']!,
+                programTitle: program['title']!,
+                programColor: program['color']!,
+                targetCalories: int.parse(program['calories']!.replaceAll(',', '')),
+                targetProtein: int.parse(program['protein']!.replaceAll('g', '')),
+                targetCarbs: int.parse(program['carbs']!.replaceAll('g', '')),
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        // Close loading dialog if still open
+        if (mounted && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // Show error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 class NutritionPlan {
-  final String userId;
+  final String userID;
   final String type; // bulking / cutting / lean / maintenance
   final List<String> selectedFoodIds;
   final int targetCalories;
@@ -8,7 +8,7 @@ class NutritionPlan {
   final DateTime updatedAt;
 
   NutritionPlan({
-    required this.userId,
+    required this.userID,
     required this.type,
     required this.selectedFoodIds,
     required this.targetCalories,
@@ -20,7 +20,7 @@ class NutritionPlan {
   // Convert to JSON for Firestore
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      'userID': userID,
       'type': type,
       'selectedFoodIds': selectedFoodIds,
       'targetCalories': targetCalories,
@@ -33,7 +33,7 @@ class NutritionPlan {
   // Create from Firestore document
   factory NutritionPlan.fromFirestore(Map<String, dynamic> data) {
     return NutritionPlan(
-      userId: data['userId'] ?? '',
+      userID: data['userID'] ?? '',
       type: data['type'] ?? '',
       selectedFoodIds: List<String>.from(data['selectedFoodIds'] ?? []),
       targetCalories: data['targetCalories'] ?? 0,
@@ -47,7 +47,7 @@ class NutritionPlan {
 
   // Copy with method for updates
   NutritionPlan copyWith({
-    String? userId,
+    String? userID,
     String? type,
     List<String>? selectedFoodIds,
     int? targetCalories,
@@ -56,7 +56,7 @@ class NutritionPlan {
     DateTime? updatedAt,
   }) {
     return NutritionPlan(
-      userId: userId ?? this.userId,
+      userID: userID ?? this.userID,
       type: type ?? this.type,
       selectedFoodIds: selectedFoodIds ?? this.selectedFoodIds,
       targetCalories: targetCalories ?? this.targetCalories,
