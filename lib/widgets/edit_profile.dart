@@ -8,10 +8,10 @@ class EditProfileModal extends StatefulWidget {
   final Function(String) onUpdate;
 
   const EditProfileModal({
-    Key? key,
+    super.key,
     required this.currentUsername,
     required this.onUpdate,
-  }) : super(key: key);
+  });
 
   @override
   State<EditProfileModal> createState() => _EditProfileModalState();
@@ -99,7 +99,10 @@ class _EditProfileModalState extends State<EditProfileModal> {
                 const SizedBox(height: 10),
                 Text(
                   _errorMessage!,
-                  style: TextStyle(color: CupertinoColors.systemRed, fontSize: 13),
+                  style: TextStyle(
+                    color: CupertinoColors.systemRed,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -127,15 +130,13 @@ class _EditProfileModalState extends State<EditProfileModal> {
 }
 
 void showEditProfileModal(
-    BuildContext context, {
-      required String currentUsername,
-      required Function(String) onUpdate,
-    }) {
+  BuildContext context, {
+  required String currentUsername,
+  required Function(String) onUpdate,
+}) {
   showCupertinoDialog(
     context: context,
-    builder: (context) => EditProfileModal(
-      currentUsername: currentUsername,
-      onUpdate: onUpdate,
-    ),
+    builder: (context) =>
+        EditProfileModal(currentUsername: currentUsername, onUpdate: onUpdate),
   );
 }

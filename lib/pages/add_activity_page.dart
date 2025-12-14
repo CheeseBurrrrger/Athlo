@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AddActivityPage extends StatefulWidget {
-  const AddActivityPage({Key? key}) : super(key: key);
+  const AddActivityPage({super.key});
 
   @override
   State<AddActivityPage> createState() => _AddActivityPageState();
@@ -25,7 +25,7 @@ class _AddActivityPageState extends State<AddActivityPage> {
     "Yoga",
     "Swimming",
     "Hiking",
-    "Lari Bolo"
+    "Lari Bolo",
   ];
 
   @override
@@ -35,7 +35,7 @@ class _AddActivityPageState extends State<AddActivityPage> {
         backgroundColor: const Color(0xFF1974F5),
         title: const Text(
           "Add Activity",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
@@ -52,19 +52,16 @@ class _AddActivityPageState extends State<AddActivityPage> {
 
               // Dropdown
               DropdownButtonFormField<String>(
-                value: selectedType,
+                initialValue: selectedType,
                 items: activityTypes.map((type) {
-                  return DropdownMenuItem(
-                    value: type,
-                    child: Text(type),
-                  );
+                  return DropdownMenuItem(value: type, child: Text(type));
                 }).toList(),
                 decoration: _inputDecoration(),
                 onChanged: (value) {
                   setState(() => selectedType = value);
                 },
                 validator: (value) =>
-                value == null ? "Please select activity type" : null,
+                    value == null ? "Please select activity type" : null,
               ),
 
               const SizedBox(height: 20),
@@ -95,30 +92,30 @@ class _AddActivityPageState extends State<AddActivityPage> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-
                     final user = FirebaseAuth.instance.currentUser;
                     final username = user?.displayName ?? "Unknown User";
 
-                    await FirebaseFirestore.instance.collection('activities').add({
-                      "userName": username,
-                      "activityType": selectedType,
-                      "distance": distanceController.text,
-                      "time": timeController.text,
-                      "calories": caloriesController.text,
-                      "notes": notesController.text,
-                      "createdAt": FieldValue.serverTimestamp(),
-                    });
+                    await FirebaseFirestore.instance
+                        .collection('activities')
+                        .add({
+                          "userName": username,
+                          "activityType": selectedType,
+                          "distance": distanceController.text,
+                          "time": timeController.text,
+                          "calories": caloriesController.text,
+                          "notes": notesController.text,
+                          "createdAt": FieldValue.serverTimestamp(),
+                        });
 
                     Navigator.pop(context);
                   }
                 },
 
-
                 child: const Text(
                   "Post Activity",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -130,14 +127,16 @@ class _AddActivityPageState extends State<AddActivityPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           decoration: _inputDecoration(),
           validator: (value) =>
-          (value == null || value.isEmpty) ? "Required field" : null,
+              (value == null || value.isEmpty) ? "Required field" : null,
         ),
         const SizedBox(height: 16),
       ],

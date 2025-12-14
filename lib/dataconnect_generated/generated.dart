@@ -1,4 +1,5 @@
-library dataconnect_generated;
+library;
+
 import 'package:firebase_data_connect/firebase_data_connect.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
@@ -11,34 +12,22 @@ part 'update_goal.dart';
 
 part 'list_meals.dart';
 
-
-
-
-
-
-
 class ExampleConnector {
-  
-  
-  CreateUserVariablesBuilder createUser () {
-    return CreateUserVariablesBuilder(dataConnect, );
+  CreateUserVariablesBuilder createUser() {
+    return CreateUserVariablesBuilder(dataConnect);
   }
-  
-  
-  ListWorkoutsForUserVariablesBuilder listWorkoutsForUser () {
-    return ListWorkoutsForUserVariablesBuilder(dataConnect, );
+
+  ListWorkoutsForUserVariablesBuilder listWorkoutsForUser() {
+    return ListWorkoutsForUserVariablesBuilder(dataConnect);
   }
-  
-  
-  UpdateGoalVariablesBuilder updateGoal () {
-    return UpdateGoalVariablesBuilder(dataConnect, );
+
+  UpdateGoalVariablesBuilder updateGoal() {
+    return UpdateGoalVariablesBuilder(dataConnect);
   }
-  
-  
-  ListMealsVariablesBuilder listMeals () {
-    return ListMealsVariablesBuilder(dataConnect, );
+
+  ListMealsVariablesBuilder listMeals() {
+    return ListMealsVariablesBuilder(dataConnect);
   }
-  
 
   static ConnectorConfig connectorConfig = ConnectorConfig(
     'us-east4',
@@ -49,9 +38,11 @@ class ExampleConnector {
   ExampleConnector({required this.dataConnect});
   static ExampleConnector get instance {
     return ExampleConnector(
-        dataConnect: FirebaseDataConnect.instanceFor(
-            connectorConfig: connectorConfig,
-            sdkType: CallerSDKType.generated));
+      dataConnect: FirebaseDataConnect.instanceFor(
+        connectorConfig: connectorConfig,
+        sdkType: CallerSDKType.generated,
+      ),
+    );
   }
 
   FirebaseDataConnect dataConnect;

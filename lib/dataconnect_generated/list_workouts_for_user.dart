@@ -1,18 +1,22 @@
 part of 'generated.dart';
 
 class ListWorkoutsForUserVariablesBuilder {
-  
   final FirebaseDataConnect _dataConnect;
-  ListWorkoutsForUserVariablesBuilder(this._dataConnect, );
-  Deserializer<ListWorkoutsForUserData> dataDeserializer = (dynamic json)  => ListWorkoutsForUserData.fromJson(jsonDecode(json));
-  
+  ListWorkoutsForUserVariablesBuilder(this._dataConnect);
+  Deserializer<ListWorkoutsForUserData> dataDeserializer = (dynamic json) =>
+      ListWorkoutsForUserData.fromJson(jsonDecode(json));
+
   Future<QueryResult<ListWorkoutsForUserData, void>> execute() {
     return ref().execute();
   }
 
   QueryRef<ListWorkoutsForUserData, void> ref() {
-    
-    return _dataConnect.query("ListWorkoutsForUser", dataDeserializer, emptySerializer, null);
+    return _dataConnect.query(
+      "ListWorkoutsForUser",
+      dataDeserializer,
+      emptySerializer,
+      null,
+    );
   }
 }
 
@@ -22,31 +26,35 @@ class ListWorkoutsForUserWorkouts {
   final DateTime date;
   final int durationMinutes;
   final String workoutType;
-  ListWorkoutsForUserWorkouts.fromJson(dynamic json):
-  
-  id = nativeFromJson<String>(json['id']),
-  date = nativeFromJson<DateTime>(json['date']),
-  durationMinutes = nativeFromJson<int>(json['durationMinutes']),
-  workoutType = nativeFromJson<String>(json['workoutType']);
+  ListWorkoutsForUserWorkouts.fromJson(dynamic json)
+    : id = nativeFromJson<String>(json['id']),
+      date = nativeFromJson<DateTime>(json['date']),
+      durationMinutes = nativeFromJson<int>(json['durationMinutes']),
+      workoutType = nativeFromJson<String>(json['workoutType']);
   @override
   bool operator ==(Object other) {
-    if(identical(this, other)) {
+    if (identical(this, other)) {
       return true;
     }
-    if(other.runtimeType != runtimeType) {
+    if (other.runtimeType != runtimeType) {
       return false;
     }
 
-    final ListWorkoutsForUserWorkouts otherTyped = other as ListWorkoutsForUserWorkouts;
-    return id == otherTyped.id && 
-    date == otherTyped.date && 
-    durationMinutes == otherTyped.durationMinutes && 
-    workoutType == otherTyped.workoutType;
-    
+    final ListWorkoutsForUserWorkouts otherTyped =
+        other as ListWorkoutsForUserWorkouts;
+    return id == otherTyped.id &&
+        date == otherTyped.date &&
+        durationMinutes == otherTyped.durationMinutes &&
+        workoutType == otherTyped.workoutType;
   }
+
   @override
-  int get hashCode => Object.hashAll([id.hashCode, date.hashCode, durationMinutes.hashCode, workoutType.hashCode]);
-  
+  int get hashCode => Object.hashAll([
+    id.hashCode,
+    date.hashCode,
+    durationMinutes.hashCode,
+    workoutType.hashCode,
+  ]);
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
@@ -57,7 +65,7 @@ class ListWorkoutsForUserWorkouts {
     return json;
   }
 
-  ListWorkoutsForUserWorkouts({
+  const ListWorkoutsForUserWorkouts({
     required this.id,
     required this.date,
     required this.durationMinutes,
@@ -68,27 +76,25 @@ class ListWorkoutsForUserWorkouts {
 @immutable
 class ListWorkoutsForUserData {
   final List<ListWorkoutsForUserWorkouts> workouts;
-  ListWorkoutsForUserData.fromJson(dynamic json):
-  
-  workouts = (json['workouts'] as List<dynamic>)
-        .map((e) => ListWorkoutsForUserWorkouts.fromJson(e))
-        .toList();
+  ListWorkoutsForUserData.fromJson(dynamic json)
+    : workouts = (json['workouts'] as List<dynamic>)
+          .map((e) => ListWorkoutsForUserWorkouts.fromJson(e))
+          .toList();
   @override
   bool operator ==(Object other) {
-    if(identical(this, other)) {
+    if (identical(this, other)) {
       return true;
     }
-    if(other.runtimeType != runtimeType) {
+    if (other.runtimeType != runtimeType) {
       return false;
     }
 
     final ListWorkoutsForUserData otherTyped = other as ListWorkoutsForUserData;
     return workouts == otherTyped.workouts;
-    
   }
+
   @override
   int get hashCode => workouts.hashCode;
-  
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
@@ -96,8 +102,5 @@ class ListWorkoutsForUserData {
     return json;
   }
 
-  ListWorkoutsForUserData({
-    required this.workouts,
-  });
+  const ListWorkoutsForUserData({required this.workouts});
 }
-

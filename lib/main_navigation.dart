@@ -6,7 +6,7 @@ import 'progress_tracker.dart';
 import 'pages/workout_page.dart';
 
 class MainNavigation extends StatefulWidget {
-  const MainNavigation({Key? key}) : super(key: key);
+  const MainNavigation({super.key});
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -20,7 +20,7 @@ class _MainNavigationState extends State<MainNavigation> {
     WorkoutPage(),
     const ActivityFeedPage(),
     const ProgressTrackerPage(),
-    NutritionGridApp(),
+    NutritionPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -57,7 +57,9 @@ class _MainNavigationState extends State<MainNavigation> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 250),
               top: -15,
-              left: _getCircleX(context, _selectedIndex) - 24, // hitung posisi icon
+              left:
+                  _getCircleX(context, _selectedIndex) -
+                  24, // hitung posisi icon
               child: Container(
                 width: 65,
                 height: 65,
@@ -130,5 +132,4 @@ class _MainNavigationState extends State<MainNavigation> {
       ),
     );
   }
-
 }

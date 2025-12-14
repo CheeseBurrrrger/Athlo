@@ -1,17 +1,18 @@
 import 'package:athlo/models/workout_session.dart' hide WorkoutSession;
 import 'package:flutter/cupertino.dart';
 import '../models/workout_session.dart';
+
 class WorkoutSummaryPage extends StatelessWidget {
   final WorkoutSession session;
 
-  const WorkoutSummaryPage({Key? key, required this.session}) : super(key: key);
+  const WorkoutSummaryPage({super.key, required this.session});
 
   @override
   Widget build(BuildContext context) {
     final duration = session.duration;
     final totalSets = session.exercises.fold<int>(
       0,
-          (sum, ex) => sum + ex.sets.where((s) => s.isCompleted).length,
+      (sum, ex) => sum + ex.sets.where((s) => s.isCompleted).length,
     );
 
     return CupertinoPageScaffold(
@@ -74,17 +75,16 @@ class WorkoutSummaryPage extends StatelessWidget {
               const SizedBox(height: 12),
 
               ...session.exercises.map((exercise) {
-                final completedSets =
-                    exercise.sets.where((s) => s.isCompleted).length;
+                final completedSets = exercise.sets
+                    .where((s) => s.isCompleted)
+                    .length;
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: CupertinoColors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: CupertinoColors.systemGrey5,
-                    ),
+                    border: Border.all(color: CupertinoColors.systemGrey5),
                   ),
                   child: Row(
                     children: [
@@ -155,10 +155,7 @@ class WorkoutSummaryPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           Text(
             label,

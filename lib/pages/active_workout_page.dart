@@ -27,7 +27,6 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
   int restTimeRemaining = 0;
   bool isResting = false;
 
-  // Controllers for input fields
   final List<List<TextEditingController>> _repsControllers = [];
   final List<List<TextEditingController>> _weightControllers = [];
 

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'main.dart'; // Import ResponsiveLayout
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -26,10 +26,13 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      try{
-        await authService.value.signIn(email: _emailController.text, password: _passwordController.text);
+      try {
+        await authService.value.signIn(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
         Navigator.pushReplacementNamed(context, '/home');
-      } on FirebaseAuthException catch (e){
+      } on FirebaseAuthException catch (e) {
         setState(() {
           errorMessage = e.message ?? 'this thing wont working';
         });
@@ -60,17 +63,17 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 24),
             Text(
               'Selamat Datang',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               'Login untuk melanjutkan',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
@@ -123,9 +126,8 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Text(
                       'Login',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -197,10 +199,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(height: 24),
           // const SizedBox(height: 16),
-          Text(
-            errorMessage,
-            style: TextStyle(color: Colors.redAccent),
-          ),
+          Text(errorMessage, style: TextStyle(color: Colors.redAccent)),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _login,
@@ -214,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: ()async{
+            onPressed: () async {
               try {
                 await authService.value.googleSignIn();
                 if (mounted) {
@@ -236,7 +235,10 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('continue with Google', style: TextStyle(fontSize: 16)),
+            child: const Text(
+              'continue with Google',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
           const SizedBox(height: 16),
           Row(

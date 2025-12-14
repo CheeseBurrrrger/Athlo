@@ -7,10 +7,7 @@ import '../models/exercise.dart';
 class CustomWorkoutDetailPage extends StatelessWidget {
   final CustomWorkout workout;
 
-  const CustomWorkoutDetailPage({
-    Key? key,
-    required this.workout,
-  }) : super(key: key);
+  const CustomWorkoutDetailPage({super.key, required this.workout});
 
   Color _getColorFromHex(String hexColor) {
     try {
@@ -129,7 +126,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         'Program latihan ini dirancang untuk memaksimalkan hasil dengan fokus pada ${workout.targetMuscle}. '
-                            'Cocok untuk level ${workout.level} yang ingin meningkatkan kekuatan dan massa otot.',
+                        'Cocok untuk level ${workout.level} yang ingin meningkatkan kekuatan dan massa otot.',
                         style: const TextStyle(
                           fontSize: 14,
                           color: CupertinoColors.systemGrey,
@@ -185,51 +182,55 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                       }),
 
                       const SizedBox(height: 24),
-        SizedBox(
-          width: double.infinity,
-          child: CupertinoButton.filled(
-            onPressed: () {
-              showCupertinoDialog(
-                context: context,
-                builder: (context) => CupertinoAlertDialog(
-                  title: const Text('Start Workout?'),
-                  content: Text('Ready to start ${workout.title}?'),
-                  actions: [
-                    CupertinoDialogAction(
-                      child: const Text('Cancel'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    CupertinoDialogAction(
-                      isDefaultAction: true,
-                      child: const Text('Start'),
-                      onPressed: () {
-                        Navigator.pop(context); // Close dialog
-                        // Navigate to Active Workout
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => ActiveWorkoutPage(
-                              workout: workout,
+                      SizedBox(
+                        width: double.infinity,
+                        child: CupertinoButton.filled(
+                          onPressed: () {
+                            // Show confirmation dialog
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (context) => CupertinoAlertDialog(
+                                title: const Text('Start Workout?'),
+                                content: Text(
+                                  'Ready to start ${workout.title}?',
+                                ),
+                                actions: [
+                                  CupertinoDialogAction(
+                                    child: const Text('Cancel'),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    child: const Text('Start'),
+                                    onPressed: () {
+                                      Navigator.pop(context); // Close dialog
+                                      // Navigate to Active Workout
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) =>
+                                              ActiveWorkoutPage(
+                                                workout: workout,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: const Text(
+                            'Start Workout',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-            borderRadius: BorderRadius.circular(12),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: const Text(
-              'Start Workout',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+                        ),
+                      ),
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -242,7 +243,12 @@ class CustomWorkoutDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(IconData icon, String label, String value, Color color) {
+  Widget _buildInfoCard(
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -270,10 +276,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ],
@@ -282,11 +285,11 @@ class CustomWorkoutDetailPage extends StatelessWidget {
   }
 
   Widget _buildExerciseCard(
-      Exercise exercise,
-      int index,
-      Color color,
-      BuildContext context,
-      ) {
+    Exercise exercise,
+    int index,
+    Color color,
+    BuildContext context,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -355,11 +358,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(
-                    CupertinoIcons.info_circle,
-                    color: color,
-                    size: 20,
-                  ),
+                  Icon(CupertinoIcons.info_circle, color: color, size: 20),
                 ],
               ),
             ),
@@ -382,9 +381,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Center(
-                      child: CupertinoActivityIndicator(
-                        color: color,
-                      ),
+                      child: CupertinoActivityIndicator(color: color),
                     );
                   },
                   errorBuilder: (context, error, stackTrace) {
@@ -417,7 +414,11 @@ class CustomWorkoutDetailPage extends StatelessWidget {
     );
   }
 
-  void _showExerciseDetails(Exercise exercise, BuildContext context, Color color) {
+  void _showExerciseDetails(
+    Exercise exercise,
+    BuildContext context,
+    Color color,
+  ) {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => Material(
@@ -447,7 +448,10 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                 border: null,
                 middle: Text(
                   exercise.name,
-                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 trailing: CupertinoButton(
                   padding: EdgeInsets.zero,
@@ -477,7 +481,11 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(CupertinoIcons.settings, size: 14, color: color),
+                              Icon(
+                                CupertinoIcons.settings,
+                                size: 14,
+                                color: color,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 exercise.equipment,
@@ -507,16 +515,20 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                               child: Image.network(
                                 exercise.gifUrl,
                                 fit: BoxFit.contain,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CupertinoActivityIndicator(color: color),
-                                  );
-                                },
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CupertinoActivityIndicator(
+                                          color: color,
+                                        ),
+                                      );
+                                    },
                                 errorBuilder: (context, error, stackTrace) {
                                   return Center(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           CupertinoIcons.photo,
