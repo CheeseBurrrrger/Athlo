@@ -7,6 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:athlo/services/workout_goal_integration.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'dart:async';
 
 class ActiveWorkoutPage extends StatefulWidget {
@@ -146,12 +149,45 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
   }
 
   void _finishWorkout() async {
+    // Update session status
     session.endTime = DateTime.now();
     session.status = 'completed';
 
     try {
+      // Show loading
+      showCupertinoDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => CupertinoAlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              CupertinoActivityIndicator(),
+              SizedBox(height: 16),
+              Text('Saving workout...'),
+            ],
+          ),
+        ),
+      );
+
+      // Save session to Firestore
       await _sessionService.saveSession(session);
 
+      // Sync with goals
+      final integration = WorkoutGoalIntegration();
+      final userId = authService.value.currentUser?.uid ?? '';
+
+      if (userId.isNotEmpty) {
+        await integration.onWorkoutCompleted(
+          userId: userId,
+          session: session,
+        );
+      }
+
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+      // Navigate to summary
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -161,7 +197,14 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
         );
       }
     } catch (e) {
-      print('Error saving workout: $e');
+      print('Error completing workout: $e');
+
+      // Close loading if still open
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      // Still navigate to summary even if sync fails
       if (mounted) {
         Navigator.pushReplacement(
           context,
