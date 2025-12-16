@@ -21,7 +21,9 @@ class CustomWorkoutDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _getColorFromHex(workout.color);
 
-    return CupertinoPageScaffold(
+    return Material(
+
+    child: CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       child: CustomScrollView(
         slivers: [
@@ -62,7 +64,6 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                   ),
                 ),
 
-                // Content
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -136,7 +137,6 @@ class CustomWorkoutDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
-                      // Exercise List Header
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -145,6 +145,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
+                              color: CupertinoColors.black
                             ),
                           ),
                           Container(
@@ -169,7 +170,6 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
 
-                      // Dynamic exercise list from workout data
                       ...workout.exercises.asMap().entries.map((entry) {
                         final index = entry.key;
                         final exercise = entry.value;
@@ -186,7 +186,6 @@ class CustomWorkoutDetailPage extends StatelessWidget {
                         width: double.infinity,
                         child: CupertinoButton.filled(
                           onPressed: () {
-                            // Show confirmation dialog
                             showCupertinoDialog(
                               context: context,
                               builder: (context) => CupertinoAlertDialog(
@@ -240,6 +239,7 @@ class CustomWorkoutDetailPage extends StatelessWidget {
           ),
         ],
       ),
+      )
     );
   }
 

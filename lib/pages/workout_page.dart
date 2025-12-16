@@ -205,11 +205,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
           'Workout Plans',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: CupertinoColors.white,
+        backgroundColor: CupertinoColors.activeBlue,
         border: null,
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.star, color: CupertinoColors.systemYellow),
+          child: const Icon(CupertinoIcons.star, color: CupertinoColors.white),
           onPressed: () async {
             final result = await showCupertinoModalPopup(
               context: context,
@@ -217,7 +217,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
             );
 
             if (result == true) {
-              // Optionally show success message
             }
           },
         ),
@@ -239,7 +238,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       child: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // Header Banner
             SliverToBoxAdapter(
               child: Container(
                 width: double.infinity,
@@ -275,7 +273,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            // Stats Cards
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -312,7 +309,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            // Custom Workouts Section
             StreamBuilder<List>(
               stream: workoutService.readSpecificUser(uId),
               builder: (context, snapshot) {
@@ -358,7 +354,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: CupertinoColors.systemGrey,
+                                color: CupertinoColors.black,
                               ),
                             ),
                           ],
@@ -398,7 +394,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ),
 
-            // Featured Workouts from Firebase
             StreamBuilder<List<CustomWorkout>>(
               stream: featuredWorkoutService.readAll(),
               builder: (context, snapshot) {

@@ -367,7 +367,6 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
 
                             const SizedBox(height: 20),
 
-                            // GIF
                             if (currentExercise.gifUrl.isNotEmpty)
                               Container(
                                 height: 250,
@@ -581,7 +580,9 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
     final currentExercise = session.exercises[currentExerciseIndex];
     final duration = session.duration;
 
-    return CupertinoPageScaffold(
+    return Material(
+
+    child: CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -738,7 +739,6 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
                       ],
                     ),
 
-                    // Show GIF if available
                     if (widget.workout.exercises[currentExerciseIndex].gifUrl
                         .isNotEmpty) ...[
                       const SizedBox(height: 16),
@@ -999,6 +999,7 @@ class _ActiveWorkoutPageState extends State<ActiveWorkoutPage> {
           ],
         ),
       ),
+    )
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:athlo/services/auth_service.dart';
 import 'package:athlo/services/custom_workout_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../models/custom_workout.dart';
 import '../models/exercise.dart';
 import '../models/muscle.dart';
@@ -173,7 +174,9 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+
+    child : Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: const BoxDecoration(
         color: CupertinoColors.white,
@@ -583,6 +586,7 @@ class _EditWorkoutBottomSheetState extends State<EditWorkoutBottomSheet> {
           ),
         ],
       ),
+    )
     );
   }
 
