@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 import 'nutrition_page.dart';
-import 'community.dart';
+import 'pages/community.dart';
 import 'progress_tracker.dart';
 import 'pages/workout_page.dart';
 
@@ -36,7 +36,16 @@ class _MainNavigationState extends State<MainNavigation> {
 
       bottomNavigationBar: Container(
         height: 90,
-        color: const Color(0xFF1974F5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 12,
+              offset: const Offset(0, -4), // 🔼 shadow ke atas
+            ),
+          ],
+        ),
         child: Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none,
@@ -65,7 +74,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 height: 65,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: const Color(0xFF1974F5),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -85,7 +94,7 @@ class _MainNavigationState extends State<MainNavigation> {
               child: Icon(
                 _getIcon(_selectedIndex),
                 size: 30,
-                color: const Color(0xFF1974F5),
+                color: Colors.white,
               ),
             ),
           ],
@@ -128,7 +137,10 @@ class _MainNavigationState extends State<MainNavigation> {
       child: Icon(
         icon,
         size: 28,
-        color: isActive ? Colors.transparent : Colors.white,
+        color: isActive
+            ? Colors.transparent
+            : const Color(0xFF1974F5),
+
       ),
     );
   }

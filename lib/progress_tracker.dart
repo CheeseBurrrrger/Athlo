@@ -52,7 +52,10 @@ class _ProgressTrackerPageState extends State<ProgressTrackerPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Text('My Progress', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'My Progress',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             if (_isSyncing) ...[
               const SizedBox(width: 12),
               const SizedBox(
@@ -66,14 +69,10 @@ class _ProgressTrackerPageState extends State<ProgressTrackerPage> {
             ],
           ],
         ),
-        backgroundColor: const Color(0xFF3C467B),
-        foregroundColor: Colors.white,
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _isSyncing ? null : _syncActivities,
-            tooltip: 'Sync Activities',
           ),
           IconButton(
             icon: const Icon(Icons.history),
@@ -490,7 +489,7 @@ class AllGoalsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Goals'),
-        backgroundColor: const Color(0xFF3C467B),
+        backgroundColor: const Color(0xFF1974F5),
         foregroundColor: Colors.white,
       ),
       body: StreamBuilder<List<Goal>>(

@@ -19,6 +19,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Multi-Platform App',
       theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1974F5),
+          foregroundColor: Colors.white,
+          elevation: 0,
+
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+        ),
         useMaterial3: true,
         primarySwatch: Colors.blue,
         inputDecorationTheme: InputDecorationTheme(

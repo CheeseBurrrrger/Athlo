@@ -10,7 +10,6 @@ class ActivityFeedPage extends StatefulWidget {
 }
 
 class _ActivityFeedPageState extends State<ActivityFeedPage> {
-  // 🔧 Helper: format timestamp menjadi "Just now / 2 hours ago"
   String _formatTimestamp(Timestamp? ts) {
     if (ts == null) return "Just now";
 
@@ -23,7 +22,6 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> {
     return "${diff.inDays} days ago";
   }
 
-  // 🔧 Helper: mapping ikon berdasarkan activityType
   IconData _getActivityIcon(String type) {
     switch (type.toLowerCase()) {
       case "running":
@@ -39,7 +37,7 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> {
       case "hiking":
         return Icons.terrain;
       default:
-        return Icons.sports; // fallback ikon
+        return Icons.sports;
     }
   }
 
@@ -52,15 +50,8 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> {
           'Community Feed',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
       ),
 
-      // STREAMBUILDER → real-time feed dari Firestore
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('activities')
@@ -84,7 +75,6 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> {
             itemBuilder: (context, index) {
               final data = docs[index].data();
 
-              // 🔒 Pastikan semua field aman
               final userName = data['userName'] ?? "Unknown User";
               final activityType = data['activityType'] ?? "Unknown";
               final distance = data['distance'] ?? "-";
@@ -126,9 +116,6 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> {
   }
 }
 
-//
-// ───────────────────────────────────────── ACTIVITY MODEL ──────────────
-//
 
 class Activity {
   final String userName;
@@ -158,9 +145,6 @@ class Activity {
   });
 }
 
-//
-// ─────────────────────────────────────── ACTIVITY CARD UI ──────────────
-//
 
 class ActivityCard extends StatelessWidget {
   final Activity activity;

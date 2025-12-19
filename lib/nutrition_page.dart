@@ -52,13 +52,12 @@ class _NutritionPageState extends State<NutritionPage> {
 
     if (_isInitializing) {
       return Scaffold(
-        backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
+          backgroundColor: const Color(0xFF1974F5),
           title: Text(
             'Nutrition Plan',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          backgroundColor: Color(0xFF3C467B),
         ),
         body: Center(child: CircularProgressIndicator()),
       );
@@ -71,7 +70,7 @@ class _NutritionPageState extends State<NutritionPage> {
           'Nutrition Plan',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Color(0xFF3C467B),
+        backgroundColor: Color(0xFF1974F5),
         elevation: 0,
         actions: [
           IconButton(
@@ -260,31 +259,57 @@ class _NutritionPageState extends State<NutritionPage> {
             ),
             SizedBox(height: 12),
 
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all(16),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: nutritionPrograms.length,
-              itemBuilder: (context, index) {
-                final program = nutritionPrograms[index];
-                return NutritionCard(
-                  title: program['title']!,
-                  subtitle: program['subtitle']!,
-                  calories: program['calories']!,
-                  protein: program['protein']!,
-                  icon: program['icon']!,
-                  color: program['color']!,
-                  badge: program['badge']!,
-                  onTap: () => _selectProgram(context, program, user!.uid),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                int crossAxisCount;
+                double childAspectRatio;
+
+                if (constraints.maxWidth >= 1200) {
+                  // Desktop besar
+                  crossAxisCount = 5;
+                  childAspectRatio = 1.1;
+                } else if (constraints.maxWidth >= 900) {
+                  // Desktop kecil / Tablet landscape
+                  crossAxisCount = 4;
+                  childAspectRatio = 1;
+                } else if (constraints.maxWidth >= 600) {
+                  // Tablet portrait
+                  crossAxisCount = 3;
+                  childAspectRatio = 0.9;
+                } else {
+                  // Mobile
+                  crossAxisCount = 2;
+                  childAspectRatio = 0.85;
+                }
+
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  itemCount: nutritionPrograms.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: childAspectRatio,
+                  ),
+                  itemBuilder: (context, index) {
+                    final program = nutritionPrograms[index];
+                    return NutritionCard(
+                      title: program['title']!,
+                      subtitle: program['subtitle']!,
+                      calories: program['calories']!,
+                      protein: program['protein']!,
+                      icon: program['icon']!,
+                      color: program['color']!,
+                      badge: program['badge']!,
+                      onTap: () => _selectProgram(context, program, user!.uid),
+                    );
+                  },
                 );
               },
             ),
+
           ],
         ),
       ),

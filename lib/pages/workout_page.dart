@@ -205,7 +205,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           'Workout Plans',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: CupertinoColors.white,
+        backgroundColor: const Color(0xFF1974F5),
         border: null,
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
