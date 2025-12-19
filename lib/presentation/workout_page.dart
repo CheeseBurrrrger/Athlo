@@ -1,14 +1,14 @@
+import 'package:athlo/domain/entities/custom_workout.dart';
+import 'package:athlo/presentation/provider/workout_provider.dart';
 import 'package:athlo/services/auth_service.dart';
 import 'package:athlo/services/custom_workout_service.dart';
 import 'package:athlo/services/workout_session_service.dart';
 import 'package:athlo/services/featured_workout_service.dart';
 import 'package:athlo/widgets/add_feature_workout_bottom_sheet.dart' hide AddFeaturedWorkoutBottomSheet;
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../pages/custom_workout_detail_page.dart';
-import '../pages/workout_detail_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Material, Colors;
+import 'package:http/http.dart';
 import '../widgets/workout_card.dart';
 import '../widgets/popular_workout_card.dart';
 import '../widgets/quick_stat_card.dart';
@@ -16,7 +16,6 @@ import '../widgets/add_workout_bottom_sheet.dart';
 import '../widgets/add_feature_workout_bottom_sheet.dart';
 import '../widgets/edit_workout_bottom_sheet.dart';
 import '../services/workout_storage_service.dart';
-import '../models/custom_workout.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage({Key? key}) : super(key: key);
@@ -27,8 +26,9 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   final WorkoutStorageService _storageService = WorkoutStorageService();
-  WorkoutService workoutService = WorkoutService();
+  // WorkoutService workoutService = WorkoutService();
   WorkoutSessionService workoutSessionService = WorkoutSessionService();
+
   FeaturedWorkoutService featuredWorkoutService = FeaturedWorkoutService();
 
   List<CustomWorkout> customWorkouts = [];
@@ -197,6 +197,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final workoutProvider = context.read<WorkoutProvider>();
     final uId = authService.value.currentUser!.uid;
     print("userId : " + uId);
     return CupertinoPageScaffold(
@@ -205,12 +206,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           'Workout Plans',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-<<<<<<< HEAD
         backgroundColor: const Color(0xFF1974F5),
-=======
-        backgroundColor: CupertinoColors.activeBlue,
->>>>>>> ec265f766ea74e51ab4935f9a07c17d6aae6dfdf
-        border: null,
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.star, color: CupertinoColors.white),
@@ -397,6 +393,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 ),
               ),
             ),
+
 
             StreamBuilder<List<CustomWorkout>>(
               stream: featuredWorkoutService.readAll(),

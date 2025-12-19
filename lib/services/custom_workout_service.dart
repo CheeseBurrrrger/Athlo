@@ -1,4 +1,4 @@
-import 'package:athlo/models/custom_workout.dart';
+import 'package:athlo/data/models/custom_workout_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WorkoutService{

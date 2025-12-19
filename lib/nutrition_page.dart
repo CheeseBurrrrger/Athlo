@@ -2,8 +2,8 @@
 import 'package:athlo/pages/my_nutrition_plan_page.dart';
 import 'package:athlo/pages/nutrition_food_list_page.dart';
 import 'package:flutter/material.dart';
-import '../services/nutrition_plan_service.dart';
-import '../widgets/nutrition_card.dart';
+import 'services/nutrition_plan_service.dart';
+import 'widgets/nutrition_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class NutritionPage extends StatefulWidget {
