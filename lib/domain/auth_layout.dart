@@ -1,7 +1,7 @@
-import 'package:athlo/main_navigation.dart';
-import 'package:athlo/register_page.dart';
-import 'package:athlo/services/auth_service.dart';
-import 'package:athlo/widgets/app_loading.dart';
+import 'package:athlo/presentation/main_navigation.dart';
+import 'package:athlo/presentation/pages/register_page.dart';
+import 'package:athlo/presentation/widgets/app_loading.dart';
+import 'package:athlo/data/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class AuthLayout extends StatelessWidget{
