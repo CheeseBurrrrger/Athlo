@@ -21,47 +21,78 @@ class WorkoutDetailPage extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
-      child: CustomScrollView(
-        slivers: [
-          _buildNavigationBar(),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                _buildHeroSection(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildInfoCards(),
-                      const SizedBox(height: 24),
-                      _buildOverviewSection(),
-                      const SizedBox(height: 24),
-                      _buildExerciseListSection(),
-                      const SizedBox(height: 24),
-                      _buildStartButton(context),
-                      const SizedBox(height: 24),
-                    ],
+      child: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              // Add padding for the fixed nav bar
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 44), // Height of nav bar
+              ),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _buildHeroSection(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoCards(),
+                          const SizedBox(height: 24),
+                          _buildOverviewSection(),
+                          const SizedBox(height: 24),
+                          _buildExerciseListSection(),
+                          const SizedBox(height: 24),
+                          _buildStartButton(context),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // Fixed navigation bar on top
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: CupertinoColors.activeGreen,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top,
+              ),
+              child: CupertinoNavigationBar(
+                backgroundColor: CupertinoColors.activeGreen,
+                middle: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: CupertinoColors.white,
                   ),
                 ),
-              ],
+                leading: CupertinoNavigationBarBackButton(
+                  color: CupertinoColors.white,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                border: null,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-
-  // ========================================
-  // Navigation Bar
-  // ========================================
-  Widget _buildNavigationBar() {
+  Widget _buildNavigationBar(BuildContext context) {
     return CupertinoSliverNavigationBar(
-      backgroundColor: color,
-      largeTitle: Text(
+      backgroundColor: CupertinoColors.activeGreen,
+      middle: Text(
         title,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
@@ -70,15 +101,12 @@ class WorkoutDetailPage extends StatelessWidget {
       ),
       leading: CupertinoNavigationBarBackButton(
         color: CupertinoColors.white,
-        onPressed: () {}, // Navigator.pop will be added when integrated
+        onPressed: () => Navigator.pop(context),
       ),
-      stretch: true,
+      border: null,
     );
   }
 
-  // ========================================
-  // Hero Section
-  // ========================================
   Widget _buildHeroSection() {
     return Container(
       height: 200,
@@ -93,15 +121,13 @@ class WorkoutDetailPage extends StatelessWidget {
         child: Icon(
           icon,
           size: 80,
-          color: CupertinoColors.white.withOpacity(0.3),
+          color: CupertinoColors.activeGreen.withOpacity(0.3),
         ),
       ),
     );
   }
 
-  // ========================================
-  // Info Cards
-  // ========================================
+
   Widget _buildInfoCards() {
     return Column(
       children: [
@@ -161,7 +187,7 @@ class WorkoutDetailPage extends StatelessWidget {
       children: [
         const Text(
           'Workout Overview',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: CupertinoColors.activeBlue),
         ),
         const SizedBox(height: 12),
         Text(
@@ -169,7 +195,7 @@ class WorkoutDetailPage extends StatelessWidget {
           'Cocok untuk level $level yang ingin meningkatkan kekuatan dan massa otot.',
           style: const TextStyle(
             fontSize: 14,
-            color: CupertinoColors.systemGrey,
+            color: CupertinoColors.black,
             height: 1.5,
           ),
         ),
@@ -177,16 +203,14 @@ class WorkoutDetailPage extends StatelessWidget {
     );
   }
 
-  // ========================================
-  // Exercise List Section
-  // ========================================
+
   Widget _buildExerciseListSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Exercise List',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: CupertinoColors.darkBackgroundGray),
         ),
         const SizedBox(height: 12),
         ..._getExerciseList().map((exercise) {

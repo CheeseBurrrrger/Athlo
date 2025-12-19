@@ -318,7 +318,7 @@ class _ProgressTrackerPageState extends State<ProgressTrackerPage> {
         }
 
         final stats = snapshot.data!;
-        final completionRate = stats['completionRate'] as double;
+        final completionRate = (stats['completionRate'] as num).toDouble();
 
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
