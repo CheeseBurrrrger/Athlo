@@ -1,14 +1,14 @@
 import 'package:athlo/domain/models/exercise.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../domain//models/muscle.dart';
+import '../../domain/models/muscle.dart';
 
 class ExerciseDBService {
   static const String baseUrl = 'https://www.exercisedb.dev/api/v1';
 
   Future<List<Muscle>> getMuscles() async {
     try {
-      print('Fetching muscles from API...'); // Debug
+      print('Fetching muscles from API...');
       final response = await http.get(
         Uri.parse('$baseUrl/muscles'),
         headers: {
