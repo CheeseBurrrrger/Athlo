@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/goal.dart';
+import '../../domain/logic/goal_calculations.dart';
 import '../../data/services/goal_service.dart';
 
 class CreateGoalSheet extends StatefulWidget {
@@ -83,24 +84,11 @@ class _CreateGoalSheetState extends State<CreateGoalSheet> {
   }
 
   (DateTime, DateTime) _calculateDates() {
-    final now = DateTime.now();
-
-    if (_selectedPeriod == GoalPeriod.custom) {
-      return (_customStartDate ?? now, _customEndDate ?? now.add(const Duration(days: 7)));
-    }
-
-    if (_selectedPeriod == GoalPeriod.weekly) {
-      // final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-      final startOfWeek = now; // start from current moment
-      final endOfWeek = startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59));
-      return (startOfWeek, endOfWeek);
-    }
-
-    // Monthly
-    // final startOfMonth = DateTime(now.year, now.month, 1);
-    final startOfMonth = now; // start from current moment
-    final endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59);
-    return (startOfMonth, endOfMonth);
+    return GoalCalculations.calculateDateRange(
+      _selectedPeriod,
+      _customStartDate,
+      _customEndDate,
+    );
   }
 
   Future<void> _saveGoal() async {

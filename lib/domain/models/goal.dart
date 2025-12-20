@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../logic/goal_calculations.dart';
 
 enum GoalMetric { calories, duration, workouts }
 
@@ -40,55 +40,16 @@ class Goal {
   });
 
   double get progressPercentage =>
-      targetValue > 0 ? (currentValue / targetValue * 100).clamp(0, 100) : 0;
+      GoalCalculations.calculateProgressPercentage(currentValue, targetValue);
 
-  String get progressStatus {
-    if (status == GoalStatus.completed) return 'Met';
-    if (status == GoalStatus.paused) return 'Paused';
-    if (status == GoalStatus.ended) return 'Ended';
+  String get progressStatus =>
+      GoalCalculations.determineProgressStatus(startDate, endDate, progressPercentage, status);
 
-    final totalDays = endDate.difference(startDate).inDays;
-    final daysElapsed = DateTime.now().difference(startDate).inDays;
-    final progressRatio = totalDays > 0 ? daysElapsed / totalDays : 0;
+  String get statusColor =>
+      GoalCalculations.getStatusColor(progressStatus);
 
-    if (progressPercentage >= 100) return 'Met';
-    if (progressPercentage >= 70) return 'On track';
-    if (progressRatio >= 0.5 && progressPercentage < 50) return 'Behind';
-    return 'On track';
-  }
-
-  String get statusColor {
-    switch (progressStatus) {
-      case 'Met':
-        return '#4CAF50'; // Green
-      case 'On track':
-        return '#4CAF50'; // Green
-      case 'Behind':
-        return '#FF9800'; // Orange
-      case 'Paused':
-      case 'Ended':
-        return '#9E9E9E'; // Gray
-      default:
-        return '#2196F3'; // Blue
-    }
-  }
-
-  String get encouragementMessage {
-    switch (progressStatus) {
-      case 'Met':
-        return 'Goal achieved! 🎉';
-      case 'On track':
-        return 'Keep pushing! You\'re doing great! 💪';
-      case 'Behind':
-        return 'Don\'t give up! Every step counts! 🔥';
-      case 'Paused':
-        return 'Ready to continue?';
-      case 'Ended':
-        return 'Goal ended';
-      default:
-        return 'Let\'s do this! 🚀';
-    }
-  }
+  String get encouragementMessage =>
+      GoalCalculations.getEncouragementMessage(progressStatus);
 
   Map<String, dynamic> toJson() {
     return {
